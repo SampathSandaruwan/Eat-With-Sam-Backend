@@ -1,0 +1,50 @@
+{
+	"info": {
+		"_postman_id": "7a340775-5cda-4582-8961-cb681c734115",
+		"name": "Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4042103",
+		"_collection_link": "https://dark-crescent-384717.postman.co/workspace/EatWithSam~d3d5eb29-ff5c-4396-8be9-a6c35858022a/collection/4042103-7a340775-5cda-4582-8961-cb681c734115?action=share&source=collection_link&creator=4042103"
+	},
+	"item": [
+		{
+			"name": "Lifecycle",
+			"item": [
+				{
+					"name": "Health check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/health",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Not found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/some-not-found-url-ho-ho-ho",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"some-not-found-url-ho-ho-ho"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
