@@ -15,6 +15,7 @@ Comprehensive database schema documentation is available in the [database docume
 - Detailed table schemas for all entities
 - Indexes and performance considerations
 - Relationship explanations (e.g., why categories are restaurant-specific)
+- Reporting query patterns for sales, top-selling items, and average order value
 
 ## API Testing
 

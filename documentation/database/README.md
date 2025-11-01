@@ -9,6 +9,7 @@ The database is designed for a food delivery system using **MySQL** with **Seque
 ## Table of Contents
 
 - [Schema Overview](./schema-overview.md) - Entity relationships and database structure
+- [Reporting Queries](./reporting-queries.md) - Query patterns for reporting APIs
 - [Users Table](./tables/users.md) - User accounts and authentication
 - [RefreshTokens Table](./tables/refresh-tokens.md) - JWT refresh token storage
 - [Restaurants Table](./tables/restaurants.md) - Restaurant information

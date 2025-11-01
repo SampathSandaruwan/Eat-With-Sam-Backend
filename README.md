@@ -48,6 +48,22 @@ npm run dev
 npm start
 ```
 
+## Database Seeding
+
+The project includes a database seeding system using Faker.js for generating fake data. This is useful for development and testing.
+
+### Running Seeders
+
+```bash
+npm run seed
+```
+
+For more details on creating and using seeders, see the [seeders documentation](./seeders/README.md).
+
+## Documentation
+
+For comprehensive documentation including database schema, API testing, and more, see the [documentation](./documentation/README.md) directory.
+
 ## Project Structure
 
 ```
@@ -60,6 +76,12 @@ npm start
 │   └── index.ts     # Routes index
 ├── controllers/     # Route controllers
 ├── middlewares/     # Custom middlewares
+├── seeders/         # Database seeders with Faker.js
+│   ├── index.ts     # Main seeder runner
+│   ├── types.ts     # Seeder utilities and types
+│   └── README.md    # Seeder documentation
+├── documentation/   # Project documentation
+│   └── README.md    # Documentation index
 ├── app.ts           # Express app setup
 ├── server.ts        # Server entry point
 ├── tsconfig.json    # TypeScript configuration
@@ -85,4 +107,9 @@ npm start
 | `DB_NAME` | Database name | Yes | - |
 | `DB_USER` | MySQL username | Yes | - |
 | `DB_PASSWORD` | MySQL password | Yes | - |
+| `JWT_SECRET` | Secret key for signing JWT tokens | Yes | - |
+| `JWT_REFRESH_SECRET` | Secret key for signing refresh tokens | Yes | - |
+| `ACCESS_TOKEN_EXPIRY` | Access token expiration time (e.g., "15m", "1h") | No | `15m` |
+| `REFRESH_TOKEN_EXPIRY` | Refresh token expiration time (e.g., "7d", "30d") | No | `7d` |
+| `REFRESH_TOKEN_CLEANUP_RETENTION_DAYS` | Days to keep expired refresh tokens before deletion (for stolen token detection) | No | `7` |
 
