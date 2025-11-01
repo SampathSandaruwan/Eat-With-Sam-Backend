@@ -4,6 +4,8 @@ This directory contains all documentation for the EatWithSam backend project.
 
 ## Table of Contents
 
+- [Implementation Plan](./implementation-plan.md) - Step-by-step implementation roadmap with progress tracking
+- [Quality Assurance Checklist](./Quality-Assurance-Checklist.md) - Pre-submission quality checklist
 - [Database Schema](./database/README.md) - Complete database schema documentation
 - [API Testing](./api/README.md) - Postman collection and API testing guide
 - [Business Decisions](./business-decisions.md) - Items requiring business/product decisions
