@@ -1,11 +1,12 @@
-import { Sequelize } from 'sequelize';
+/* eslint-disable no-console */
 import dotenv from 'dotenv';
+import { Sequelize } from 'sequelize';
 
 dotenv.config();
 
-const dbName = process.env.DB_NAME
-const dbUser = process.env.DB_USER
-const dbPassword = process.env.DB_PASSWORD
+const dbName = process.env.DB_NAME;
+const dbUser = process.env.DB_USER;
+const dbPassword = process.env.DB_PASSWORD;
 
 if (!dbName || !dbUser || !dbPassword) {
   throw new Error('Database credentials are not set');
@@ -24,9 +25,9 @@ const sequelize = new Sequelize(
       max: 5,
       min: 0,
       acquire: 30000,
-      idle: 10000
-    }
-  }
+      idle: 10000,
+    },
+  },
 );
 
 // Test the connection

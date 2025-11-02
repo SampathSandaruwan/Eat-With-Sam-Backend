@@ -2,11 +2,27 @@
 
 This document outlines the step-by-step implementation roadmap for the EatWithSam backend assignment. The implementation is organized into modules that align with commit boundaries.
 
+## Current Status
+
+**Phase 1: Menu & Order Management** - **In Progress** (65% Complete)
+- ✅ Restaurant Management APIs (CRUD + Pagination)
+- ✅ Restaurant Rating Calculation (Automated job + Maintenance endpoints)
+- ✅ Menu Category Management APIs (CRUD + Pagination)
+- ✅ Menu Item Management APIs (CRUD + Pagination)
+- ✅ Common validation utilities (pagination, ID params)
+- ✅ Database seeding infrastructure
+- ✅ Postman collection updated
+- ⏳ Order Management APIs (Pending)
+- ⏳ Complete seeding with 10,000+ orders (Pending Order model)
+
+**Phase 2: Authentication & Authorization** - **Not Started**
+**Phase 3: Reporting** - **Not Started**
+
 ## Implementation Order
 
-1. **Phase 1: Menu & Order Management** (Foundation)
-2. **Phase 2: Authentication & Authorization** (Security)
-3. **Phase 3: Reporting** (Analytics)
+1. **Phase 1: Menu & Order Management** (Foundation) - *In Progress*
+2. **Phase 2: Authentication & Authorization** (Security) - *Pending*
+3. **Phase 3: Reporting** (Analytics) - *Pending*
 
 ---
 
@@ -47,23 +63,24 @@ All phases must ensure:
 3. **Database Connection & Models**
    - [x] Verify Sequelize database configuration
    - [x] Test database connection
-   - [ ] Create Sequelize models for:
-     - [ ] Restaurant
-     - [ ] MenuCategory
-     - [ ] MenuItem
+   - [x] Create Sequelize models for:
+     - [x] Restaurant
+     - [x] MenuCategory
+     - [x] MenuItem
      - [ ] Order
      - [ ] OrderItem
      - [ ] User
      - [ ] RefreshToken
      - [ ] Rating
-   - [ ] Define model associations
-   - [ ] Add model validations
+   - [x] Define model associations (for Restaurant, MenuCategory, MenuItem)
+   - [x] Add model validations (for Restaurant, MenuCategory, MenuItem)
    - [ ] Create database migrations
 
 4. **Validation Setup**
-   - [ ] Install and configure Zod (or Yup)
-   - [ ] Create validation schemas directory structure
-   - [ ] Create validation middleware wrapper
+   - [x] Install and configure Zod
+   - [x] Create validation schemas directory structure
+   - [x] Create validation middleware wrapper
+   - [x] Extract common validation fields (pagination, ID params)
 
 5. **Error Handling Infrastructure**
    - [ ] Create custom error classes (AppError, ValidationError, NotFoundError, etc.)
@@ -78,9 +95,9 @@ All phases must ensure:
    - [ ] Setup test scripts in `package.json`
 
 7. **Linting & Code Quality**
-   - [ ] Configure ESLint for TypeScript (dependencies installed, config missing)
+   - [x] Configure ESLint for TypeScript
    - [ ] Setup Prettier (optional)
-   - [ ] Add lint scripts to `package.json`
+   - [x] Add lint scripts to `package.json`
    - [ ] Configure pre-commit hooks (Husky + lint-staged)
 
 8. **CI/CD Setup**
@@ -97,32 +114,33 @@ All phases must ensure:
 
 #### Tasks
 1. **Restaurant Model Implementation**
-   - [ ] Complete Restaurant Sequelize model
-   - [ ] Add all required fields with types
-   - [ ] Add model validations (name, email format, etc.)
-   - [ ] Add indexes for performance
+   - [x] Complete Restaurant Sequelize model
+   - [x] Add all required fields with types
+   - [x] Add model validations (name, email format, etc.)
+   - [x] Add indexes for performance
    - [ ] Test model creation and queries
 
 2. **Restaurant Validation Schemas**
-   - [ ] Create Zod schemas for:
-     - [ ] Create restaurant request
-     - [ ] Update restaurant request
-     - [ ] Query parameters (pagination, filters)
-   - [ ] Add meaningful error messages
+   - [x] Create Zod schemas for:
+     - [x] Create restaurant request
+     - [x] Update restaurant request
+     - [x] Query parameters (pagination, filters)
+   - [x] Add meaningful error messages
+   - [x] Extract common pagination fields
 
 3. **Restaurant Controller**
-   - [ ] `createRestaurant()` - Create new restaurant
-   - [ ] `getRestaurant()` - Get restaurant by ID
-   - [ ] `getAllRestaurants()` - List all with pagination
-   - [ ] `updateRestaurant()` - Update restaurant
-   - [ ] `deleteRestaurant()` - Soft delete (set isActive=false)
-   - [ ] Error handling in all methods
+   - [x] `createRestaurant()` - Create new restaurant
+   - [x] `getRestaurantById()` - Get restaurant by ID
+   - [x] `getAllRestaurants()` - List all with pagination
+   - [x] `updateRestaurant()` - Update restaurant (PATCH)
+   - [x] `deleteRestaurant()` - Delete restaurant
+   - [x] Error handling in all methods
 
 4. **Restaurant Routes**
-   - [ ] Define RESTful routes (`POST /api/restaurants`, `GET /api/restaurants`, etc.)
-   - [ ] Connect routes to controller methods
-   - [ ] Add validation middleware
-   - [ ] Test all endpoints manually
+   - [x] Define RESTful routes (`POST /api/restaurants`, `GET /api/restaurants`, etc.)
+   - [x] Connect routes to controller methods
+   - [x] Add validation middleware
+   - [x] Test all endpoints manually
 
 5. **Restaurant Service Layer (Optional but Recommended)**
    - [ ] Extract business logic from controllers
@@ -141,53 +159,105 @@ All phases must ensure:
 
 ---
 
+### Module 1.2.1: Restaurant Rating Calculation
+
+#### Tasks
+1. **Restaurant Model Updates**
+   - [x] Add `averageRating` field (DECIMAL(9, 8))
+   - [x] Add `ratingCount` field (INTEGER)
+   - [x] Add index on `averageRating` for sorting/filtering
+   - [x] Add model validations (min: 0, max: 5 for rating)
+
+2. **Rating Calculation Job**
+   - [x] Create `calculateRestaurantRatings()` job function
+   - [x] Implement weighted average calculation from menu items
+   - [x] Handle restaurants with no rated items
+   - [x] Process all restaurants with error handling
+   - [x] Return calculation results (success, processed, errors)
+
+3. **Cron Job Configuration**
+   - [x] Install `node-cron` package
+   - [x] Create cron configuration (`config/crons.ts`)
+   - [x] Schedule rating calculation every 4 hours
+   - [x] Integrate cron jobs into server startup
+
+4. **Maintenance Endpoints**
+   - [x] Create maintenance controller
+   - [x] Add `POST /api/maintenance/calculate-ratings` endpoint
+   - [x] Allow manual triggering of rating calculation
+   - [x] Return job execution results
+
+5. **Database Sync Script**
+   - [x] Create database sync script (`scripts/sync-database.ts`)
+   - [x] Add `sync-db` npm script
+   - [x] Support schema synchronization (ALTER only, no drops)
+
+6. **Rating Calculation Tests**
+   - [ ] Unit tests for rating calculation logic
+   - [ ] Test weighted average accuracy
+   - [ ] Test edge cases (no ratings, zero ratings)
+   - [ ] Integration tests for maintenance endpoint
+   - [ ] Test cron job execution
+
+**Commit**: `feat(restaurants): :zap: add automated restaurant rating calculation from menu items`
+
+---
+
 ### Module 1.3: Menu Management APIs
 
 #### Tasks
 1. **MenuCategory Model Implementation**
-   - [ ] Complete MenuCategory Sequelize model
-   - [ ] Add restaurantId foreign key
-   - [ ] Add validations
-   - [ ] Test model associations
+   - [x] Complete MenuCategory Sequelize model
+   - [x] Add restaurantId foreign key
+   - [x] Add validations
+   - [x] Test model associations
 
 2. **MenuItem Model Implementation**
-   - [ ] Complete MenuItem Sequelize model
-   - [ ] Add categoryId and restaurantId foreign keys
-   - [ ] Add validations (price > 0, rating 1-5, etc.)
-   - [ ] Handle JSON tags field
-   - [ ] Add averageRating and ratingCount logic
-   - [ ] Test model associations
+   - [x] Complete MenuItem Sequelize model
+   - [x] Add categoryId and restaurantId foreign keys
+   - [x] Add validations (price > 0, rating 1-5, etc.)
+   - [x] Handle JSON tags field
+   - [x] Add averageRating and ratingCount fields
+   - [x] Test model associations
 
 3. **Menu Validation Schemas**
-   - [ ] Create Zod schemas for:
-     - [ ] Create/update category requests
-     - [ ] Create/update menu item requests
-     - [ ] Query parameters (pagination, filters, sorting)
+   - [x] Create Zod schemas for:
+     - [x] Create/update category requests
+     - [x] Create/update menu item requests
+     - [x] Query parameters (pagination, filters, sorting)
+   - [x] Extract common validation fields
 
 4. **Menu Controllers**
-   - [ ] **Categories:**
-     - [ ] `createCategory()`
-     - [ ] `getCategoriesByRestaurant()` - List categories for a restaurant
-     - [ ] `updateCategory()`
-     - [ ] `deleteCategory()`
-   - [ ] **Menu Items:**
-     - [ ] `createMenuItem()`
-     - [ ] `getMenuItem()` - Get item by ID
-     - [ ] `getMenuItems()` - List with pagination, filtering, sorting
-     - [ ] `updateMenuItem()`
-     - [ ] `deleteMenuItem()`
+   - [x] **Categories:**
+     - [x] `getAllCategories()` - List all categories with pagination
+     - [x] `getCategoryById()` - Get category by ID
+     - [x] `getCategoriesByRestaurantId()` - List categories for a restaurant
+     - [x] `createMenuCategory()` - Create category
+     - [x] `updateMenuCategory()` - Update category
+     - [x] `deleteMenuCategory()` - Delete category
+   - [x] **Menu Items:**
+     - [x] `createMenuItem()` - Create menu item
+     - [x] `getMenuItemById()` - Get item by ID
+     - [x] `getMenuItemsByCategoryId()` - List with pagination, filtering, sorting
+     - [x] `updateMenuItem()` - Update menu item
+     - [x] `deleteMenuItem()` - Delete menu item
+   - [x] Refactored with helper functions for code reuse
 
 5. **Menu Routes**
-   - [ ] Define RESTful routes:
-     - [ ] `POST /api/restaurants/:restaurantId/categories`
-     - [ ] `GET /api/restaurants/:restaurantId/categories`
-     - [ ] `POST /api/restaurants/:restaurantId/menu-items`
-     - [ ] `GET /api/restaurants/:restaurantId/menu-items` (with pagination)
-     - [ ] `GET /api/menu-items/:id`
-     - [ ] `PUT /api/menu-items/:id`
-     - [ ] `DELETE /api/menu-items/:id`
-   - [ ] Add validation middleware
-   - [ ] Test pagination, filtering, sorting
+   - [x] Define RESTful routes:
+     - [x] `POST /api/menu-categories`
+     - [x] `GET /api/menu-categories` (with pagination)
+     - [x] `GET /api/menu-categories/:categoryId`
+     - [x] `PATCH /api/menu-categories/:categoryId`
+     - [x] `DELETE /api/menu-categories/:categoryId`
+     - [x] `GET /api/restaurants/:restaurantId/menu-categories` (with pagination)
+     - [x] `POST /api/menu-items`
+     - [x] `GET /api/menu-items/:menuItemId`
+     - [x] `PUT /api/menu-items/:menuItemId`
+     - [x] `DELETE /api/menu-items/:menuItemId`
+     - [x] `GET /api/menu-categories/:categoryId/menu-items` (with pagination)
+   - [x] Add validation middleware
+   - [x] Test pagination, filtering, sorting
 
 6. **Menu Tests**
    - [ ] Unit tests for models and validations
@@ -279,12 +349,13 @@ All phases must ensure:
 
 5. **Seeder Runner**
    - [x] Seeder infrastructure exists (`seeders/index.ts`)
-   - [x] Seeder utilities created (`seeders/types.ts` with `createSeeder`)
+   - [x] Seeder utilities created (`seeders/utils/helpers.ts` with `createSeeder`)
    - [x] Faker.js integrated
-   - [ ] Update `seeders/index.ts` to run all seeders in order
-   - [ ] Add options for count and clearExisting
+   - [x] Seeders for restaurants, menu categories, and menu items created
+   - [x] Update `seeders/index.ts` to run all seeders in order
+   - [x] Add options for count and clearExisting
    - [ ] Test seeder execution
-   - [ ] Verify 10,000+ orders are created
+   - [ ] Verify 10,000+ orders are created (pending Order model)
 
 6. **Seeder Tests**
    - [ ] Test individual seeders
@@ -299,10 +370,10 @@ All phases must ensure:
 
 #### Tasks
 1. **API Documentation**
-   - [ ] Update Postman collection with all endpoints
-   - [ ] Add request/response examples
-   - [ ] Document error responses
-   - [ ] Add pagination examples
+   - [x] Update Postman collection with restaurant, category, and menu item endpoints
+   - [x] Add request/response examples
+   - [ ] Document error responses (partially done)
+   - [x] Add pagination examples
 
 2. **Code Documentation**
    - [ ] Add JSDoc comments to controllers
@@ -798,26 +869,33 @@ All phases must ensure:
 
 ## Quick Reference: Module Commit Order
 
-1. `chore: setup project infrastructure and tooling`
-2. `feat(restaurants): implement CRUD APIs with validation and tests`
-3. `feat(menu): implement menu categories and items CRUD APIs with pagination`
-4. `feat(orders): implement order management APIs with calculations and validation`
-5. `feat(seeders): implement database seeders with Faker.js for 10,000+ orders`
-6. `docs(api): update API documentation for menu and order endpoints`
-7. `feat(auth): implement user registration with validation`
-8. `feat(auth): implement JWT login with access and refresh tokens`
-9. `feat(auth): implement refresh token rotation`
-10. `feat(auth): implement authentication middleware for route protection`
-11. `feat(auth): protect routes and add user management endpoints`
-12. `docs(auth): update API documentation for authentication endpoints`
-13. `feat(reports): implement sales reporting APIs with time period aggregation`
-14. `feat(reports): implement top-selling items reporting APIs`
-15. `feat(reports): implement average order value reporting APIs`
-16. `feat(reports): add advanced querying and optimize performance`
-17. `docs(reports): update API documentation for reporting endpoints`
-18. `test: add comprehensive test coverage`
-19. `ci: finalize CI/CD pipeline with full test and lint checks`
-20. `chore: final code quality improvements and documentation review`
+### Completed ✅
+1. ✅ `chore: initialize Express TypeScript backend with Sequelize`
+2. ✅ `docs(database): add comprehensive database schema documentation`
+3. ✅ `feat(seeders): add database seeding infrastructure with Faker.js`
+4. ✅ `docs: add implementation plan, QA checklist, and documentation structure`
+5. ✅ `feat(menu): implement restaurant, menu category and menu item CRUD APIs with validation`
+6. ✅ `feat(api): implement complete CRUD operations and pagination`
+7. ✅ `feat(restaurants): :zap: add automated restaurant rating calculation from menu items`
+
+### In Progress / Next Steps
+8. `feat(orders): implement order management APIs with calculations and validation`
+9. `feat(seeders): complete database seeders with Faker.js for 10,000+ orders` (pending Order model)
+10. `docs(api): update API documentation for menu and order endpoints`
+11. `feat(auth): implement user registration with validation`
+12. `feat(auth): implement JWT login with access and refresh tokens`
+13. `feat(auth): implement refresh token rotation`
+14. `feat(auth): implement authentication middleware for route protection`
+15. `feat(auth): protect routes and add user management endpoints`
+16. `docs(auth): update API documentation for authentication endpoints`
+17. `feat(reports): implement sales reporting APIs with time period aggregation`
+18. `feat(reports): implement top-selling items reporting APIs`
+19. `feat(reports): implement average order value reporting APIs`
+20. `feat(reports): add advanced querying and optimize performance`
+21. `docs(reports): update API documentation for reporting endpoints`
+22. `test: add comprehensive test coverage`
+23. `ci: finalize CI/CD pipeline with full test and lint checks`
+24. `chore: final code quality improvements and documentation review`
 
 ---
 

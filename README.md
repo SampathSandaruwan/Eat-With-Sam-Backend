@@ -78,7 +78,8 @@ For comprehensive documentation including database schema, API testing, and more
 ├── middlewares/     # Custom middlewares
 ├── seeders/         # Database seeders with Faker.js
 │   ├── index.ts     # Main seeder runner
-│   ├── types.ts     # Seeder utilities and types
+│   ├── fixtures/    # Seeder fixtures (restaurants, menuItems, etc.)
+│   ├── utils/       # Seeder utilities (helpers, constants)
 │   └── README.md    # Seeder documentation
 ├── documentation/   # Project documentation
 │   └── README.md    # Documentation index
