@@ -1,16 +1,30 @@
 import { Router } from 'express';
 
 import {
+  createRestaurant,
+  deleteRestaurant,
   getAllRestaurants,
   getCategoriesByRestaurantId,
   getRestaurantById,
+  updateRestaurant,
 } from '../controllers';
 import { validate } from '../middlewares';
-import { filterMenuCategoriesSchema, filterRestaurantsSchema, getDataByRestaurantIdSchema } from '../validations';
+import {
+  createRestaurantSchema,
+  filterMenuCategoriesSchema,
+  filterRestaurantsSchema,
+  restaurantIdPathParamSchema,
+  updateRestaurantSchema,
+} from '../validations';
 
 const router = Router();
 
-// Restaurant routes
+router.post(
+  '',
+  validate(createRestaurantSchema),
+  createRestaurant,
+);
+
 router.get(
   '',
   validate(filterRestaurantsSchema),
@@ -19,14 +33,27 @@ router.get(
 
 router.get(
   '/:restaurantId',
-  validate(getDataByRestaurantIdSchema),
+  validate(restaurantIdPathParamSchema),
   validate(filterRestaurantsSchema),
   getRestaurantById,
 );
 
+router.patch(
+  '/:restaurantId',
+  validate(restaurantIdPathParamSchema),
+  validate(updateRestaurantSchema),
+  updateRestaurant,
+);
+
+router.delete(
+  '/:restaurantId',
+  validate(restaurantIdPathParamSchema),
+  deleteRestaurant,
+);
+
 router.get(
   '/:restaurantId/menu-categories',
-  validate(getDataByRestaurantIdSchema),
+  validate(restaurantIdPathParamSchema),
   validate(filterMenuCategoriesSchema),
   getCategoriesByRestaurantId,
 );

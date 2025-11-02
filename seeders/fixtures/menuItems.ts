@@ -89,7 +89,7 @@ export const seedMenuItems = async (
     const restaurantCategories = restaurant.menuCategories;
     const itemsForRestaurant = faker.number.int({
       min: Math.floor(itemsPerRestaurant * 0.5),
-      max: Math.min(itemsPerRestaurant + 5, 15),
+      max: Math.max(itemsPerRestaurant + 5, 15),
     });
 
     for (let i = 0; i < itemsForRestaurant && menuItems.length < count; i++) {

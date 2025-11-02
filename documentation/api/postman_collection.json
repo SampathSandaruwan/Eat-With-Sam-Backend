@@ -16,10 +16,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/health",
+							"raw": "http://localhost:3000/health",
+							"protocol": "http",
 							"host": [
-								"{{BASE_URL}}"
+								"localhost"
 							],
+							"port": "3000",
 							"path": [
 								"health"
 							]
@@ -33,12 +35,530 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/some-not-found-url-ho-ho-ho",
+							"raw": "http://localhost:3000/some-not-found-url-ho-ho-ho",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"some-not-found-url-ho-ho-ho"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Menu Categories",
+			"item": [
+				{
+					"name": "Add new menu category",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"restaurantId\": 112,\n    \"name\": \"Indian Foods\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/menu-categories",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"some-not-found-url-ho-ho-ho"
+								"menu-categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all menu categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/menu-categories?limit=4&page=1&sortBy=displayOrder&sortOrder=desc",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"menu-categories"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "4"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "sortBy",
+									"value": "displayOrder"
+								},
+								{
+									"key": "sortOrder",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a menu category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/menu-categories/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"menu-categories",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "471"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add new menu category Copy",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"displayOrder\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/menu-categories/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"menu-categories",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "441"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a menu category Copy",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/menu-categories/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"menu-categories",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "442"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all menu items of a category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/menu-categories/:categoryId/menu-items?limit=3&page=2&sortBy=price&sortOrder=desc",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"menu-categories",
+								":categoryId",
+								"menu-items"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "3"
+								},
+								{
+									"key": "page",
+									"value": "2"
+								},
+								{
+									"key": "sortBy",
+									"value": "price"
+								},
+								{
+									"key": "sortOrder",
+									"value": "desc"
+								}
+							],
+							"variable": [
+								{
+									"key": "categoryId",
+									"value": "466"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Menu Items",
+			"item": [
+				{
+					"name": "Add new menu item",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"categoryId\": 471,\n    \"restaurantId\": 120,\n    \"name\": \"Rice and curry\",\n    \"price\": 230.75\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/menu-items",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"menu-items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all menu items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/menu-items/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"menu-items",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1251"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get menu item by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/menu-items/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"menu-items",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1251"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a menu item",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"kcal\": 46\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/menu-items/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"menu-items",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1291"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a menu item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/menu-items/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"menu-items",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1251"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Restaurants",
+			"item": [
+				{
+					"name": "Add new restaurant",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Sam Foods\",\n    \"address\": \"Moratuwa, Sri Lanka\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/restaurants",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"restaurants"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all restaurants",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/restaurants?limit=10&page=1&sortBy=id&sortOrder=asc",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"restaurants"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								},
+								{
+									"key": "sortOrder",
+									"value": "asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a restaurant",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/restaurants/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"restaurants",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "112"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a restaurant",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"smcmails@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/restaurants/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"restaurants",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "112"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a restaurant Copy",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/restaurants/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"restaurants",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "111"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all menu categories of a restaurant",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/restaurants/:restaurantId/menu-categories?limit=10&page=1&sortBy=displayOrder&sortOrder=desc",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"restaurants",
+								":restaurantId",
+								"menu-categories"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "sortBy",
+									"value": "displayOrder"
+								},
+								{
+									"key": "sortOrder",
+									"value": "desc"
+								}
+							],
+							"variable": [
+								{
+									"key": "restaurantId",
+									"value": "120"
+								}
 							]
 						}
 					},

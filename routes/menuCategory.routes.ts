@@ -1,19 +1,58 @@
 import { Router } from 'express';
 
-import { getAllCategories, getMenuItemsByCategoryId } from '../controllers';
+import {
+  createMenuCategory,
+  deleteMenuCategory,
+  getAllCategories,
+  getCategoryById,
+  getMenuItemsByCategoryId,
+  updateMenuCategory,
+} from '../controllers';
 import { validate } from '../middlewares';
-import { filterMenuItemsSchema, getDataByMenuCategoryIdSchema } from '../validations';
+import {
+  createMenuCategorySchema,
+  filterMenuItemsSchema,
+  menuCategoryIdPathParamSchema,
+  updateMenuCategorySchema,
+} from '../validations';
 
 const router = Router();
 
+router.post(
+  '',
+  validate(createMenuCategorySchema),
+  createMenuCategory,
+);
+
 router.get(
   '',
+  validate(filterMenuItemsSchema),
   getAllCategories,
 );
 
 router.get(
+  '/:categoryId',
+  validate(menuCategoryIdPathParamSchema),
+  validate(filterMenuItemsSchema),
+  getCategoryById,
+);
+
+router.patch(
+  '/:categoryId',
+  validate(menuCategoryIdPathParamSchema),
+  validate(updateMenuCategorySchema),
+  updateMenuCategory,
+);
+
+router.delete(
+  '/:categoryId',
+  validate(menuCategoryIdPathParamSchema),
+  deleteMenuCategory,
+);
+
+router.get(
   '/:categoryId/menu-items',
-  validate(getDataByMenuCategoryIdSchema),
+  validate(menuCategoryIdPathParamSchema),
   validate(filterMenuItemsSchema),
   getMenuItemsByCategoryId,
 );

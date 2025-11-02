@@ -1,20 +1,52 @@
 import { Router } from 'express';
 
-import { getMenuItemById } from '../controllers';
+import {
+  createMenuItem,
+  deleteMenuItem,
+  getAllMenuItems,
+  getMenuItemById,
+  updateMenuItem,
+} from '../controllers';
 import { validate } from '../middlewares';
 import {
+  createMenuItemSchema,
   filterMenuItemsSchema,
-  getDataByMenuItemIdSchema,
+  menuItemIdPathParamSchema,
+  updateMenuItemSchema,
 } from '../validations/menu.validation';
 
 const router = Router();
 
-// GET /api/menu-items/:id - Get menu item by ID
+router.post(
+  '',
+  validate(createMenuItemSchema),
+  createMenuItem,
+);
+
+router.get(
+  '',
+  validate(filterMenuItemsSchema),
+  getAllMenuItems,
+);
+
 router.get(
   '/:menuItemId',
-  validate(getDataByMenuItemIdSchema),
+  validate(menuItemIdPathParamSchema),
   validate(filterMenuItemsSchema),
   getMenuItemById,
+);
+
+router.patch(
+  '/:menuItemId',
+  validate(menuItemIdPathParamSchema),
+  validate(updateMenuItemSchema),
+  updateMenuItem,
+);
+
+router.delete(
+  '/:menuItemId',
+  validate(menuItemIdPathParamSchema),
+  deleteMenuItem,
 );
 
 export default router;

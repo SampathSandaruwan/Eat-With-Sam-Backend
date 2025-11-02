@@ -8,16 +8,16 @@ import { MenuCategoryModel, MenuItemModel, RestaurantModel } from '../models';
 
 const SEEDING_CONFIG = {
   RESTAURANTS: {
-    COUNT: 10,
-    CLEAR_EXISTING: true,
+    COUNT: 0,
+    CLEAR_EXISTING: false,
   },
   MENU_CATEGORIES: {
-    COUNT: 40,
-    CLEAR_EXISTING: true,
+    COUNT: 5,
+    CLEAR_EXISTING: false,
   },
   MENU_ITEMS: {
-    COUNT: 100,
-    CLEAR_EXISTING: true,
+    COUNT: 10,
+    CLEAR_EXISTING: false,
   },
 };
 
