@@ -4,8 +4,9 @@ This document outlines the step-by-step implementation roadmap for the EatWithSa
 
 ## Current Status
 
-**Phase 1: Menu & Order Management** - **In Progress** (60% Complete)
+**Phase 1: Menu & Order Management** - **In Progress** (65% Complete)
 - ✅ Restaurant Management APIs (CRUD + Pagination)
+- ✅ Restaurant Rating Calculation (Automated job + Maintenance endpoints)
 - ✅ Menu Category Management APIs (CRUD + Pagination)
 - ✅ Menu Item Management APIs (CRUD + Pagination)
 - ✅ Common validation utilities (pagination, ID params)
@@ -155,6 +156,50 @@ All phases must ensure:
    - [ ] Test pagination
 
 **Commit**: `feat(restaurants): implement CRUD APIs with validation and tests`
+
+---
+
+### Module 1.2.1: Restaurant Rating Calculation
+
+#### Tasks
+1. **Restaurant Model Updates**
+   - [x] Add `averageRating` field (DECIMAL(9, 8))
+   - [x] Add `ratingCount` field (INTEGER)
+   - [x] Add index on `averageRating` for sorting/filtering
+   - [x] Add model validations (min: 0, max: 5 for rating)
+
+2. **Rating Calculation Job**
+   - [x] Create `calculateRestaurantRatings()` job function
+   - [x] Implement weighted average calculation from menu items
+   - [x] Handle restaurants with no rated items
+   - [x] Process all restaurants with error handling
+   - [x] Return calculation results (success, processed, errors)
+
+3. **Cron Job Configuration**
+   - [x] Install `node-cron` package
+   - [x] Create cron configuration (`config/crons.ts`)
+   - [x] Schedule rating calculation every 4 hours
+   - [x] Integrate cron jobs into server startup
+
+4. **Maintenance Endpoints**
+   - [x] Create maintenance controller
+   - [x] Add `POST /api/maintenance/calculate-ratings` endpoint
+   - [x] Allow manual triggering of rating calculation
+   - [x] Return job execution results
+
+5. **Database Sync Script**
+   - [x] Create database sync script (`scripts/sync-database.ts`)
+   - [x] Add `sync-db` npm script
+   - [x] Support schema synchronization (ALTER only, no drops)
+
+6. **Rating Calculation Tests**
+   - [ ] Unit tests for rating calculation logic
+   - [ ] Test weighted average accuracy
+   - [ ] Test edge cases (no ratings, zero ratings)
+   - [ ] Integration tests for maintenance endpoint
+   - [ ] Test cron job execution
+
+**Commit**: `feat(restaurants): :zap: add automated restaurant rating calculation from menu items`
 
 ---
 
@@ -831,25 +876,26 @@ All phases must ensure:
 4. ✅ `docs: add implementation plan, QA checklist, and documentation structure`
 5. ✅ `feat(menu): implement restaurant, menu category and menu item CRUD APIs with validation`
 6. ✅ `feat(api): implement complete CRUD operations and pagination`
+7. ✅ `feat(restaurants): :zap: add automated restaurant rating calculation from menu items`
 
 ### In Progress / Next Steps
-7. `feat(orders): implement order management APIs with calculations and validation`
-8. `feat(seeders): complete database seeders with Faker.js for 10,000+ orders` (pending Order model)
-9. `docs(api): update API documentation for menu and order endpoints`
-10. `feat(auth): implement user registration with validation`
-11. `feat(auth): implement JWT login with access and refresh tokens`
-12. `feat(auth): implement refresh token rotation`
-13. `feat(auth): implement authentication middleware for route protection`
-14. `feat(auth): protect routes and add user management endpoints`
-15. `docs(auth): update API documentation for authentication endpoints`
-16. `feat(reports): implement sales reporting APIs with time period aggregation`
-17. `feat(reports): implement top-selling items reporting APIs`
-18. `feat(reports): implement average order value reporting APIs`
-19. `feat(reports): add advanced querying and optimize performance`
-20. `docs(reports): update API documentation for reporting endpoints`
-21. `test: add comprehensive test coverage`
-22. `ci: finalize CI/CD pipeline with full test and lint checks`
-23. `chore: final code quality improvements and documentation review`
+8. `feat(orders): implement order management APIs with calculations and validation`
+9. `feat(seeders): complete database seeders with Faker.js for 10,000+ orders` (pending Order model)
+10. `docs(api): update API documentation for menu and order endpoints`
+11. `feat(auth): implement user registration with validation`
+12. `feat(auth): implement JWT login with access and refresh tokens`
+13. `feat(auth): implement refresh token rotation`
+14. `feat(auth): implement authentication middleware for route protection`
+15. `feat(auth): protect routes and add user management endpoints`
+16. `docs(auth): update API documentation for authentication endpoints`
+17. `feat(reports): implement sales reporting APIs with time period aggregation`
+18. `feat(reports): implement top-selling items reporting APIs`
+19. `feat(reports): implement average order value reporting APIs`
+20. `feat(reports): add advanced querying and optimize performance`
+21. `docs(reports): update API documentation for reporting endpoints`
+22. `test: add comprehensive test coverage`
+23. `ci: finalize CI/CD pipeline with full test and lint checks`
+24. `chore: final code quality improvements and documentation review`
 
 ---
 
