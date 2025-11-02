@@ -10,34 +10,35 @@ This directory contains database seeding scripts using Faker.js.
 npm run seed
 ```
 
-### Run seeders with TypeScript directly (development)
-
-```bash
-npm run seed:dev
-```
+NOTE: Modify `SEEDING_CONFIG` to customize the seeding behavior
 
 ## Adding New Seeders
 
-1. Create a new seeder file in this directory (e.g., `users.ts`)
-2. Import the seeder function in `seeders/index.ts`
+1. Create a new seeder file in the `fixtures/` directory (e.g., `fixtures/users.ts`)
+2. Import the new seeder function into `seeders/index.ts`
 3. Call the seeder function in the `runSeeders` function
 
 ### Example Seeder
 
 ```typescript
-// seeders/users.ts
-import { createSeeder, faker } from './types';
-import User from '../models/User';
+// seeders/fixtures/users.ts
+import { createSeeder, faker } from '../utils/helpers';
+import { UserModel } from '../../models';
+import { DATABASE_MODELS } from '../../constants';
 
-export const seedUsers = createSeeder<User>(User, 'User', {
-  name: () => faker.person.fullName(),
-  email: () => faker.internet.email(),
-  age: () => faker.number.int({ min: 18, max: 80 }),
-  createdAt: () => new Date(),
-});
+export const seedUsers = createSeeder<User>(
+  UserModel,
+  DATABASE_MODELS.USERS.MODEL_NAME,
+  {
+    name: () => faker.person.fullName(),
+    email: () => faker.internet.email(),
+    age: () => faker.number.int({ min: 18, max: 80 }),
+    createdAt: () => new Date(),
+  },
+);
 
 // Then in seeders/index.ts:
-import { seedUsers } from './users';
+import { seedUsers } from './fixtures/users';
 // ...
 await seedUsers({ count: 50, clearExisting: true });
 ```

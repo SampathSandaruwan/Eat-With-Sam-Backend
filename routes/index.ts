@@ -1,14 +1,19 @@
 import express, { Router } from 'express';
 
+import menuCategoryRoutes from './menuCategory.routes';
+import menuItemRoutes from './menuItem.routes';
+import restaurantRoutes from './restaurant.routes';
+
 const router: Router = express.Router();
 
-// Import route modules here
-// Example:
-// import userRoutes from './users';
-// router.use('/users', userRoutes);
+// Restaurant routes
+router.use('/restaurants', restaurantRoutes);
 
-// API versioning example
-// router.use('/v1', v1Routes);
+// Menu Category routes
+router.use('/menu-categories', menuCategoryRoutes);
+
+// Menu Item routes
+router.use('/menu-items', menuItemRoutes);
 
 export default router;
 

@@ -166,10 +166,7 @@ All phases must ensure:
 
 4. **Menu Controllers**
    - [ ] **Categories:**
-     - [ ] `createCategory()`
      - [ ] `getCategoriesByRestaurant()` - List categories for a restaurant
-     - [ ] `updateCategory()`
-     - [ ] `deleteCategory()`
    - [ ] **Menu Items:**
      - [ ] `createMenuItem()`
      - [ ] `getMenuItem()` - Get item by ID

@@ -1,20 +1,43 @@
-import { sequelize } from '../config/database';
-import { Sequelize, DataTypes } from 'sequelize';
+import MenuCategoryModel from './MenuCategory';
+import MenuItemModel from './MenuItem';
+import RestaurantModel from './Restaurant';
 
-// Import models here as you create them
-// Example:
-// import User from './User';
+// Initialize associations
+// Restaurant associations
+RestaurantModel.hasMany(MenuCategoryModel, {
+  foreignKey: 'restaurantId',
+  as: 'menuCategories',
+  onDelete: 'CASCADE',
+});
 
-const db = {
-  sequelize,
-  Sequelize,
-  DataTypes,
-  // Add models here
-  // User,
-};
+RestaurantModel.hasMany(MenuItemModel, {
+  foreignKey: 'restaurantId',
+  as: 'menuItems',
+  onDelete: 'RESTRICT',
+});
 
-// Initialize associations here if needed
-// Example: User.associate(db);
+// MenuCategory associations
+MenuCategoryModel.belongsTo(RestaurantModel, {
+  foreignKey: 'restaurantId',
+  as: 'restaurant',
+});
 
-export default db;
+MenuCategoryModel.hasMany(MenuItemModel, {
+  foreignKey: 'categoryId',
+  as: 'menuItems',
+  onDelete: 'RESTRICT',
+});
+
+// MenuItem associations
+MenuItemModel.belongsTo(MenuCategoryModel, {
+  foreignKey: 'categoryId',
+  as: 'category',
+});
+
+MenuItemModel.belongsTo(RestaurantModel, {
+  foreignKey: 'restaurantId',
+  as: 'restaurant',
+});
+
+export { MenuCategoryModel, MenuItemModel, RestaurantModel };
 

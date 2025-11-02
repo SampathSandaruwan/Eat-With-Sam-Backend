@@ -1,5 +1,25 @@
-import { sequelize } from '../config/database';
-import { testConnection } from '../config/database';
+/* eslint-disable no-console */
+import { seedMenuCategories } from './fixtures/menuCategories';
+import { seedMenuItems } from './fixtures/menuItems';
+import { seedRestaurants } from './fixtures/restaurants';
+
+import { sequelize, testConnection } from '../config/database';
+import { MenuCategoryModel, MenuItemModel, RestaurantModel } from '../models';
+
+const SEEDING_CONFIG = {
+  RESTAURANTS: {
+    COUNT: 10,
+    CLEAR_EXISTING: true,
+  },
+  MENU_CATEGORIES: {
+    COUNT: 40,
+    CLEAR_EXISTING: true,
+  },
+  MENU_ITEMS: {
+    COUNT: 100,
+    CLEAR_EXISTING: true,
+  },
+};
 
 /**
  * Main seeder runner
@@ -7,22 +27,41 @@ import { testConnection } from '../config/database';
  */
 const runSeeders = async (): Promise<void> => {
   try {
-    console.log('🌱 Starting database seeding...');
+    console.log('Starting database seeding...');
 
     // Test database connection
     await testConnection();
 
-    // Import seeders here as you create them
-    // Example:
-    // await seedUsers();
-    // await seedProducts();
+    // Sync database (create tables if they don't exist)
+    console.log('\nSyncing database models...');
+    await sequelize.sync({ alter: false, force: false });
+    console.log('Database models synced');
 
-    // Add your seeders here
-    console.log('📝 No seeders registered yet. Add seeders to seeders/index.ts');
+    console.log('\nClearing existing data...');
+    if (SEEDING_CONFIG.MENU_ITEMS.CLEAR_EXISTING) {
+      await MenuItemModel.destroy({ where: {}, force: true });
+    }
+    if (SEEDING_CONFIG.MENU_CATEGORIES.CLEAR_EXISTING) {
+      await MenuCategoryModel.destroy({ where: {}, force: true });
+    }
+    if (SEEDING_CONFIG.RESTAURANTS.CLEAR_EXISTING) {
+      await RestaurantModel.destroy({ where: {}, force: true });
+    }
+    console.log('Existing data cleared');
 
-    console.log('✅ Database seeding completed successfully!');
+    // Seed in order (respecting dependencies)
+    console.log('\nSeeding Restaurants...');
+    await seedRestaurants({ count: SEEDING_CONFIG.RESTAURANTS.COUNT });
+
+    console.log('\nSeeding Menu Categories...');
+    await seedMenuCategories({ count: SEEDING_CONFIG.MENU_CATEGORIES.COUNT });
+
+    console.log('\nSeeding Menu Items...');
+    await seedMenuItems({ count: SEEDING_CONFIG.MENU_ITEMS.COUNT });
+
+    console.log('\nDatabase seeding completed successfully!');
   } catch (error) {
-    console.error('❌ Error seeding database:', error);
+    console.error('Error seeding database:', error);
     throw error;
   } finally {
     await sequelize.close();
@@ -33,11 +72,11 @@ const runSeeders = async (): Promise<void> => {
 if (require.main === module) {
   runSeeders()
     .then(() => {
-      console.log('Database Seeding: Successful');
+      console.log('Database seeding: Successful');
       process.exit(0);
     })
     .catch((error) => {
-      console.error('Database Seeding: Failed', error);
+      console.error('Database seeding: Failed', error);
       process.exit(1);
     });
 }
