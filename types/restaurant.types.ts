@@ -18,6 +18,8 @@ export interface Restaurant {
   isActive: boolean;
   openingTime?: string | null;
   closingTime?: string | null;
+  averageRating: number;
+  ratingCount: number;
   createdAt: Date;
   updatedAt: Date;
 }

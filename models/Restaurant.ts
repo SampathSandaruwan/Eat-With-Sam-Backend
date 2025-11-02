@@ -27,6 +27,8 @@ class RestaurantModel
   public isActive!: boolean;
   public openingTime?: string | null;
   public closingTime?: string | null;
+  public averageRating!: number;
+  public ratingCount!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -153,6 +155,27 @@ RestaurantModel.init(
       type: DataTypes.TIME,
       allowNull: true,
     },
+    averageRating: {
+      type: DataTypes.DECIMAL(9, 8),
+      allowNull: false,
+      defaultValue: 0.0,
+      validate: {
+        min: 0,
+        max: 5,
+      },
+      get() {
+        const value = this.getDataValue('averageRating');
+        return value !== null && value !== undefined ? Number(value) : value;
+      },
+    },
+    ratingCount: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        min: 0,
+      },
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -179,6 +202,9 @@ RestaurantModel.init(
       {
         fields: ['isActive'],
       },
+      {
+        fields: ['averageRating'],
+      },
     ],
   },
 );
@@ -201,6 +227,9 @@ RestaurantModel.prototype.toJSON = function () {
   }
   if (values.longitude !== undefined && values.longitude !== null) {
     values.longitude = Number(values.longitude);
+  }
+  if (values.averageRating !== undefined && values.averageRating !== null) {
+    values.averageRating = Number(values.averageRating);
   }
   return values;
 };
