@@ -1,11 +1,15 @@
 import express, { Router } from 'express';
 
+import authRoutes from './auth.routes';
 import maintenanceRoutes from './maintenance.routes';
 import menuCategoryRoutes from './menuCategory.routes';
 import menuItemRoutes from './menuItem.routes';
 import restaurantRoutes from './restaurant.routes';
 
 const router: Router = express.Router();
+
+// Authentication routes
+router.use('/auth', authRoutes);
 
 // Job routes (admin/manual triggers)
 router.use('/maintenance', maintenanceRoutes);

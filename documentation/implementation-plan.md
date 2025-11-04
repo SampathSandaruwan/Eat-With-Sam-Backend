@@ -15,13 +15,24 @@ This document outlines the step-by-step implementation roadmap for the EatWithSa
 - ⏳ Order Management APIs (Pending)
 - ⏳ Complete seeding with 10,000+ orders (Pending Order model)
 
-**Phase 2: Authentication & Authorization** - **Not Started**
+**Phase 2: Authentication & Authorization** - **Completed** ✅
+- ✅ User Model with password hashing and Google OAuth support
+- ✅ User Registration (email/password and Google OAuth)
+- ✅ JWT Authentication (access and refresh tokens)
+- ✅ Refresh Token Rotation with theft detection
+- ✅ Authentication Middleware
+- ✅ Logout endpoints (single device and all devices)
+- ✅ Token expiry validation and email normalization
+- ⏳ User Profile endpoints (Pending)
+- ⏳ User Seeder (Pending)
+- ⏳ Tests (Pending)
+
 **Phase 3: Reporting** - **Not Started**
 
 ## Implementation Order
 
 1. **Phase 1: Menu & Order Management** (Foundation) - *In Progress*
-2. **Phase 2: Authentication & Authorization** (Security) - *Pending*
+2. **Phase 2: Authentication & Authorization** (Security) - *Completed* ✅
 3. **Phase 3: Reporting** (Analytics) - *Pending*
 
 ---
@@ -69,8 +80,8 @@ All phases must ensure:
      - [x] MenuItem
      - [ ] Order
      - [ ] OrderItem
-     - [ ] User
-     - [ ] RefreshToken
+     - [x] User
+     - [x] RefreshToken
      - [ ] Rating
    - [x] Define model associations (for Restaurant, MenuCategory, MenuItem)
    - [x] Add model validations (for Restaurant, MenuCategory, MenuItem)
@@ -392,27 +403,34 @@ All phases must ensure:
 
 #### Tasks
 1. **User Model Implementation**
-   - [ ] Complete User Sequelize model
-   - [ ] Add password hashing (bcrypt) hooks
-   - [ ] Add email uniqueness validation
-   - [ ] Add password strength validation (if needed)
+   - [x] Complete User Sequelize model
+   - [x] Add password hashing (bcrypt) hooks
+   - [x] Add email uniqueness validation
+   - [x] Add password strength validation (if needed)
+   - [x] Add Google OAuth support (googleId field)
+   - [x] Add user activation status (isActive)
    - [ ] Test model creation
 
 2. **Registration Validation**
-   - [ ] Create Zod schema for registration
-   - [ ] Validate email format
-   - [ ] Validate password requirements
-   - [ ] Add meaningful error messages
+   - [x] Create Zod schema for registration
+   - [x] Validate email format (with normalization)
+   - [x] Validate password requirements
+   - [x] Add unified schema supporting both email/password and Google OAuth
+   - [x] Add meaningful error messages
 
 3. **Registration Controller**
-   - [ ] `register()` - Create new user
-   - [ ] Hash password before saving
-   - [ ] Handle duplicate email errors
-   - [ ] Return user data (exclude password)
+   - [x] `register()` - Create new user
+   - [x] Support email/password registration
+   - [x] Support Google OAuth registration
+   - [x] Handle Google account linking
+   - [x] Hash password before saving (via model hooks)
+   - [x] Handle duplicate email errors
+   - [x] Return user data (exclude password via toJSON)
+   - [x] Generate and return tokens on registration
 
 4. **Registration Route**
-   - [ ] `POST /api/auth/register`
-   - [ ] Add validation middleware
+   - [x] `POST /api/auth/signup` (unified endpoint)
+   - [x] Add validation middleware
    - [ ] Test endpoint
 
 5. **Registration Tests**
@@ -420,6 +438,7 @@ All phases must ensure:
    - [ ] Test duplicate email handling
    - [ ] Test validation errors
    - [ ] Test password hashing
+   - [ ] Test Google OAuth flow
 
 **Commit**: `feat(auth): implement user registration with validation`
 
@@ -429,30 +448,37 @@ All phases must ensure:
 
 #### Tasks
 1. **JWT Utilities**
-   - [ ] Install jsonwebtoken and types
-   - [ ] Create JWT utility functions:
-     - [ ] `generateAccessToken()` - Short-lived (15-60 min)
-     - [ ] `generateRefreshToken()` - Long-lived (7-30 days)
-     - [ ] `verifyToken()` - Verify JWT tokens
-   - [ ] Store JWT secrets in environment variables
-   - [ ] Configure token expiration times
+   - [x] Install jsonwebtoken and types
+   - [x] Create JWT utility functions:
+     - [x] `generateAccessToken()` - Short-lived (15-60 min, configurable)
+     - [x] `generateRefreshToken()` - Long-lived (7-30 days, configurable)
+     - [x] `verifyAccessToken()` - Verify access tokens
+     - [x] `verifyRefreshToken()` - Verify refresh tokens
+   - [x] Store JWT secrets in environment variables
+   - [x] Configure token expiration times (with validation)
+   - [x] Add environment variable validation at startup
 
 2. **RefreshToken Model**
-   - [ ] Verify RefreshToken Sequelize model
-   - [ ] Add token hashing logic
-   - [ ] Add expiration and revocation logic
+   - [x] Complete RefreshToken Sequelize model
+   - [x] Add token hashing logic (bcrypt in beforeCreate hook)
+   - [x] Add expiration and revocation logic
+   - [x] Add device info tracking
+   - [x] Add indexes for performance (userId, expiresAt, isRevoked)
    - [ ] Test model operations
 
 3. **Login Controller**
-   - [ ] `login()` - Authenticate user
-   - [ ] Verify password (bcrypt.compare)
-   - [ ] Generate access and refresh tokens
-   - [ ] Save refresh token to database (hashed)
-   - [ ] Return tokens and user data
+   - [x] `login()` - Authenticate user
+   - [x] Verify password (bcrypt.compare)
+   - [x] Check if user is active
+   - [x] Handle Google-only users
+   - [x] Generate access and refresh tokens
+   - [x] Save refresh token to database (hashed)
+   - [x] Return tokens and user data
+   - [x] Add email normalization
 
 4. **Login Route**
-   - [ ] `POST /api/auth/login`
-   - [ ] Add validation middleware
+   - [x] `POST /api/auth/login`
+   - [x] Add validation middleware
    - [ ] Test endpoint
 
 5. **Login Tests**
@@ -469,22 +495,26 @@ All phases must ensure:
 
 #### Tasks
 1. **Refresh Token Controller**
-   - [ ] `refreshToken()` - Exchange refresh token for new access token
-   - [ ] Validate refresh token (exists, not expired, not revoked)
-   - [ ] Generate new access token
-   - [ ] Optionally rotate refresh token (security best practice)
-   - [ ] Update lastUsedAt timestamp
-   - [ ] Return new tokens
+   - [x] `refreshToken()` - Exchange refresh token for new access token
+   - [x] Validate refresh token (exists, not expired, not revoked)
+   - [x] Generate new access token
+   - [x] Rotate refresh token (security best practice)
+   - [x] Update lastUsedAt timestamp before rotation
+   - [x] Implement token theft detection (check revoked tokens)
+   - [x] Revoke all tokens on detected theft
+   - [x] Return new tokens
 
 2. **Refresh Token Route**
-   - [ ] `POST /api/auth/refresh`
-   - [ ] Add validation middleware
+   - [x] `POST /api/auth/refresh`
+   - [x] Add validation middleware
    - [ ] Test endpoint
 
 3. **Token Rotation Logic**
-   - [ ] Revoke old refresh token when rotating
-   - [ ] Issue new refresh token
-   - [ ] Store device info (optional)
+   - [x] Revoke old refresh token when rotating
+   - [x] Issue new refresh token
+   - [x] Store device info (from user-agent header)
+   - [x] Parse token expiry from environment variables
+   - [x] Handle token verification with hashed tokens
    - [ ] Handle concurrent refresh attempts
 
 4. **Refresh Token Tests**
@@ -492,6 +522,7 @@ All phases must ensure:
    - [ ] Test expired token handling
    - [ ] Test revoked token handling
    - [ ] Test token rotation
+   - [ ] Test token theft detection
 
 **Commit**: `feat(auth): implement refresh token rotation`
 
@@ -501,11 +532,14 @@ All phases must ensure:
 
 #### Tasks
 1. **Auth Middleware Implementation**
-   - [ ] Create `authenticate` middleware
-   - [ ] Extract token from Authorization header
-   - [ ] Verify access token (JWT)
-   - [ ] Attach user to request object
-   - [ ] Handle token errors (expired, invalid)
+   - [x] Create `authenticate` middleware
+   - [x] Extract token from Authorization header
+   - [x] Verify access token (JWT)
+   - [x] Fetch user from database
+   - [x] Check if user account is active
+   - [x] Attach user to request object (via Express namespace extension)
+   - [x] Handle token errors (expired, invalid)
+   - [x] Return appropriate error responses
 
 2. **Optional Auth Middleware**
    - [ ] Create `optionalAuth` middleware (for endpoints that work with or without auth)
@@ -517,6 +551,7 @@ All phases must ensure:
    - [ ] Test invalid token
    - [ ] Test expired token
    - [ ] Test user attachment to request
+   - [ ] Test inactive user handling
 
 **Commit**: `feat(auth): implement authentication middleware for route protection`
 
@@ -537,9 +572,11 @@ All phases must ensure:
    - [ ] Protect all with auth middleware
 
 3. **Logout Endpoint**
-   - [ ] `POST /api/auth/logout` - Revoke refresh token
-   - [ ] `POST /api/auth/logout-all` - Revoke all user's tokens
-   - [ ] Protect with auth middleware
+   - [x] `POST /api/auth/logout` - Revoke refresh token
+   - [x] `POST /api/auth/logout-all` - Revoke all user's tokens
+   - [x] Protect with auth middleware
+   - [x] Validate refresh token on logout
+   - [x] Return revoked token count
 
 4. **User Seeder**
    - [ ] Create user seeder with Faker.js
@@ -551,6 +588,7 @@ All phases must ensure:
    - [ ] Test protected endpoints without token
    - [ ] Test user isolation (can't access other users' data)
    - [ ] Test logout functionality
+   - [ ] Test logout-all functionality
 
 **Commit**: `feat(auth): protect routes and add user management endpoints`
 
@@ -877,21 +915,20 @@ All phases must ensure:
 5. ✅ `feat(menu): implement restaurant, menu category and menu item CRUD APIs with validation`
 6. ✅ `feat(api): implement complete CRUD operations and pagination`
 7. ✅ `feat(restaurants): :zap: add automated restaurant rating calculation from menu items`
+8. ✅ `feat(auth): implement JWT authentication with token rotation`
 
 ### In Progress / Next Steps
-8. `feat(orders): implement order management APIs with calculations and validation`
-9. `feat(seeders): complete database seeders with Faker.js for 10,000+ orders` (pending Order model)
-10. `docs(api): update API documentation for menu and order endpoints`
-11. `feat(auth): implement user registration with validation`
-12. `feat(auth): implement JWT login with access and refresh tokens`
-13. `feat(auth): implement refresh token rotation`
-14. `feat(auth): implement authentication middleware for route protection`
-15. `feat(auth): protect routes and add user management endpoints`
-16. `docs(auth): update API documentation for authentication endpoints`
-17. `feat(reports): implement sales reporting APIs with time period aggregation`
-18. `feat(reports): implement top-selling items reporting APIs`
-19. `feat(reports): implement average order value reporting APIs`
-20. `feat(reports): add advanced querying and optimize performance`
+9. `feat(orders): implement order management APIs with calculations and validation`
+10. `feat(seeders): complete database seeders with Faker.js for 10,000+ orders` (pending Order model)
+11. `docs(api): update API documentation for menu and order endpoints`
+12. `feat(auth): add user profile endpoints (GET /me, PUT /me, PUT /password)`
+13. `feat(seeders): add user seeder with Faker.js`
+14. `test(auth): add comprehensive tests for authentication flow`
+15. `docs(auth): update API documentation for authentication endpoints`
+16. `feat(reports): implement sales reporting APIs with time period aggregation`
+17. `feat(reports): implement top-selling items reporting APIs`
+18. `feat(reports): implement average order value reporting APIs`
+19. `feat(reports): add advanced querying and optimize performance`
 21. `docs(reports): update API documentation for reporting endpoints`
 22. `test: add comprehensive test coverage`
 23. `ci: finalize CI/CD pipeline with full test and lint checks`

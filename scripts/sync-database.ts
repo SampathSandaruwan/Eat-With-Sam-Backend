@@ -1,6 +1,12 @@
 /* eslint-disable no-console */
 import { sequelize, testConnection } from '../config/database';
-import { MenuCategoryModel, MenuItemModel, RestaurantModel } from '../models';
+import {
+  MenuCategoryModel,
+  MenuItemModel,
+  RefreshTokenModel,
+  RestaurantModel,
+  UserModel,
+} from '../models';
 
 /**
  * Sync database schema to match models
@@ -27,6 +33,14 @@ const syncDatabase = async (): Promise<void> => {
     console.log('\nSyncing MenuItem model...');
     await MenuItemModel.sync({ alter: true });
     console.log('MenuItem model synced');
+
+    console.log('\nSyncing User model...');
+    await UserModel.sync({ alter: true });
+    console.log('User model synced');
+
+    console.log('\nSyncing RefreshToken model...');
+    await RefreshTokenModel.sync({ alter: true });
+    console.log('RefreshToken model synced');
 
     console.log('\nDatabase schema sync completed successfully!');
   } catch (error) {

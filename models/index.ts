@@ -1,6 +1,8 @@
 import MenuCategoryModel from './MenuCategory';
 import MenuItemModel from './MenuItem';
+import RefreshTokenModel from './RefreshToken';
 import RestaurantModel from './Restaurant';
+import UserModel from './User';
 
 // Initialize associations
 // Restaurant associations
@@ -39,5 +41,17 @@ MenuItemModel.belongsTo(RestaurantModel, {
   as: 'restaurant',
 });
 
-export { MenuCategoryModel, MenuItemModel, RestaurantModel };
+// User associations
+UserModel.hasMany(RefreshTokenModel, {
+  foreignKey: 'userId',
+  as: 'refreshTokens',
+  onDelete: 'CASCADE',
+});
+
+RefreshTokenModel.belongsTo(UserModel, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
+export { MenuCategoryModel, MenuItemModel, RefreshTokenModel, RestaurantModel, UserModel };
 

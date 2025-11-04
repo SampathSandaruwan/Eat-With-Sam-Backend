@@ -16,4 +16,12 @@ export const DATABASE_MODELS: {
     TABLE_NAME: 'MenuItems',
     MODEL_NAME: 'MenuItem',
   },
+  USERS: {
+    TABLE_NAME: 'Users',
+    MODEL_NAME: 'User',
+  },
+  REFRESH_TOKENS: {
+    TABLE_NAME: 'RefreshTokens',
+    MODEL_NAME: 'RefreshToken',
+  },
 };
