@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import { Op, WhereOptions } from 'sequelize';
 
-import { MenuCategoryModel, MenuItemModel, RestaurantModel } from '../models';
-import { MenuItem } from '../types';
+import { DishModel, MenuCategoryModel, RestaurantModel } from '../models';
+import { Dish } from '../types';
 
-export const getMenuItemById = async (req: Request, res: Response): Promise<void> => {
+export const getDishById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { menuItemId } = req.params;
+    const { dishId } = req.params;
 
-    const menuItem = await MenuItemModel.findByPk(Number(menuItemId), {
+    const dish = await DishModel.findByPk(Number(dishId), {
       include: [
         {
           model: MenuCategoryModel,
@@ -23,23 +23,23 @@ export const getMenuItemById = async (req: Request, res: Response): Promise<void
       ],
     });
 
-    if (!menuItem) {
+    if (!dish) {
       res.status(404).json({
         success: false,
-        error: 'Menu item not found',
+        error: 'Dish not found',
       });
       return;
     }
 
     res.json({
       success: true,
-      data: menuItem,
+      data: dish,
     });
   } catch (error) {
-    console.error('Error fetching menu item:', error);
+    console.error('Error fetching dish:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch menu item',
+      error: 'Failed to fetch dish',
     });
   }
 };
@@ -50,7 +50,7 @@ const _generateWhereClause = (params: {
   maxPrice?: string;
   categoryId?: string;
 } = {}) => {
-  const whereClause: WhereOptions<MenuItem> = {};
+  const whereClause: WhereOptions<Dish> = {};
   if (params.categoryId !== undefined) {
     whereClause.categoryId = Number(params.categoryId);
   }
@@ -66,9 +66,9 @@ const _generateWhereClause = (params: {
   return whereClause;
 };
 
-const _filterMenuItems = async (
+const _filterDishes = async (
   res: Response,
-  whereClause: WhereOptions<MenuItem> = {},
+  whereClause: WhereOptions<Dish> = {},
   page = 1,
   limit = 20,
   sortBy = 'name',
@@ -77,7 +77,7 @@ const _filterMenuItems = async (
   const offset = (Number(page) - 1) * Number(limit);
   const orderBy = sortOrder === 'desc' ? 'DESC' : 'ASC';
 
-  const { count, rows } = await MenuItemModel.findAndCountAll({
+  const { count, rows } = await DishModel.findAndCountAll({
     where: whereClause,
     limit: Number(limit),
     offset,
@@ -108,7 +108,7 @@ const _filterMenuItems = async (
   });
 };
 
-export const getAllMenuItems = async (req: Request, res: Response): Promise<void> => {
+export const getAllDishes = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       page = 1,
@@ -121,7 +121,7 @@ export const getAllMenuItems = async (req: Request, res: Response): Promise<void
       sortOrder = 'asc',
     } = req.query;
 
-    _filterMenuItems(
+    _filterDishes(
       res,
       _generateWhereClause({
         categoryId: categoryId?.toString(),
@@ -135,15 +135,15 @@ export const getAllMenuItems = async (req: Request, res: Response): Promise<void
       sortOrder.toString() as 'asc' | 'desc',
     );
   } catch (error) {
-    console.error('Error fetching menu items:', error);
+    console.error('Error fetching dishes:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch menu items',
+      error: 'Failed to fetch dishes',
     });
   }
 };
 
-export const getMenuItemsByCategoryId = async (req: Request, res: Response): Promise<void> => {
+export const getDishesByCategoryId = async (req: Request, res: Response): Promise<void> => {
   const {
     page = 1,
     limit = 20,
@@ -167,7 +167,7 @@ export const getMenuItemsByCategoryId = async (req: Request, res: Response): Pro
       return;
     }
 
-    _filterMenuItems(
+    _filterDishes(
       res,
       _generateWhereClause({
         categoryId: categoryId?.toString(),
@@ -181,15 +181,15 @@ export const getMenuItemsByCategoryId = async (req: Request, res: Response): Pro
       sortOrder.toString() as 'asc' | 'desc',
     );
   } catch (error) {
-    console.error('Error fetching menu items:', error);
+    console.error('Error fetching dishes:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch menu items',
+      error: 'Failed to fetch dishes',
     });
   }
 };
 
-export const createMenuItem = async (req: Request, res: Response): Promise<void> => {
+export const createDish = async (req: Request, res: Response): Promise<void> => {
   try {
     const { categoryId, restaurantId } = req.body;
 
@@ -222,26 +222,26 @@ export const createMenuItem = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    const menuItem = await MenuItemModel.create(req.body);
+    const dish = await DishModel.create(req.body);
 
     res.status(201).json({
       success: true,
-      data: menuItem,
+      data: dish,
     });
   } catch (error) {
-    console.error('Error creating menu item:', error);
+    console.error('Error creating dish:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to create menu item',
+      error: 'Failed to create dish',
     });
   }
 };
 
-export const updateMenuItem = async (req: Request, res: Response): Promise<void> => {
+export const updateDish = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { menuItemId } = req.params;
+    const { dishId } = req.params;
 
-    const menuItem = await MenuItemModel.findByPk(Number(menuItemId), {
+    const dish = await DishModel.findByPk(Number(dishId), {
       include: [
         {
           model: MenuCategoryModel,
@@ -256,16 +256,16 @@ export const updateMenuItem = async (req: Request, res: Response): Promise<void>
       ],
     });
 
-    if (!menuItem) {
+    if (!dish) {
       res.status(404).json({
         success: false,
-        error: 'Menu item not found',
+        error: 'Dish not found',
       });
       return;
     }
 
-    await menuItem.update(req.body);
-    await menuItem.reload({
+    await dish.update(req.body);
+    await dish.reload({
       include: [
         {
           model: MenuCategoryModel,
@@ -282,42 +282,42 @@ export const updateMenuItem = async (req: Request, res: Response): Promise<void>
 
     res.json({
       success: true,
-      data: menuItem,
+      data: dish,
     });
   } catch (error) {
-    console.error('Error updating menu item:', error);
+    console.error('Error updating dish:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to update menu item',
+      error: 'Failed to update dish',
     });
   }
 };
 
-export const deleteMenuItem = async (req: Request, res: Response): Promise<void> => {
+export const deleteDish = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { menuItemId } = req.params;
+    const { dishId } = req.params;
 
-    const menuItem = await MenuItemModel.findByPk(Number(menuItemId));
+    const dish = await DishModel.findByPk(Number(dishId));
 
-    if (!menuItem) {
+    if (!dish) {
       res.status(404).json({
         success: false,
-        error: 'Menu item not found',
+        error: 'Dish not found',
       });
       return;
     }
 
-    await menuItem.destroy();
+    await dish.destroy();
 
     res.json({
       success: true,
-      message: 'Menu item deleted successfully',
+      message: 'Dish deleted successfully',
     });
   } catch (error) {
-    console.error('Error deleting menu item:', error);
+    console.error('Error deleting dish:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to delete menu item',
+      error: 'Failed to delete dish',
     });
   }
 };

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Includeable, WhereOptions } from 'sequelize';
 
-import { MenuCategoryModel, MenuItemModel, RestaurantModel } from '../models';
+import { DishModel, MenuCategoryModel, RestaurantModel } from '../models';
 import { MenuCategory } from '../types';
 
 export const getCategoryById = async (req: Request, res: Response): Promise<void> => {
@@ -52,7 +52,7 @@ const _filterCategories = async (
   limit = 20,
   sortBy = 'displayOrder',
   sortOrder: 'asc' | 'desc' = 'asc',
-  withMenuCategoryItems = false,
+  withDishes = false,
 ): Promise<void> => {
   const offset = (Number(page) - 1) * Number(limit);
   const orderBy = sortOrder === 'desc' ? 'DESC' : 'ASC';
@@ -65,10 +65,10 @@ const _filterCategories = async (
     },
   ];
 
-  if (withMenuCategoryItems) {
+  if (withDishes) {
     include.push({
-      model: MenuItemModel,
-      as: 'menuItems',
+      model: DishModel,
+      as: 'dishes',
       attributes: ['id', 'name', 'description', 'price', 'imageUri', 'kcal', 'tags', 'discountPercent', 'isAvailable', 'averageRating', 'ratingCount'],
       separate: false,
     });
@@ -135,7 +135,7 @@ export const getCategoriesByRestaurantId = async (
     isActive,
     sortBy = 'displayOrder',
     sortOrder = 'asc',
-    withMenuCategoryItems = false,
+    withDishes = false,
   } = req.query;
 
   try {
@@ -149,7 +149,7 @@ export const getCategoriesByRestaurantId = async (
       return;
     }
 
-    const shouldIncludeItems = String(withMenuCategoryItems) === 'true';
+    const shouldIncludeDishes = String(withDishes) === 'true';
 
     await _filterCategories(
       res,
@@ -161,7 +161,7 @@ export const getCategoriesByRestaurantId = async (
       Number(limit),
       sortBy.toString(),
       sortOrder.toString() as 'asc' | 'desc',
-      shouldIncludeItems,
+      shouldIncludeDishes,
     );
   } catch (error) {
     console.error('Error fetching categories by restaurant:', error);

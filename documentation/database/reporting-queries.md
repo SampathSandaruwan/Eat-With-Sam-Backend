@@ -67,19 +67,19 @@ ORDER BY year DESC, month DESC;
 
 ```sql
 SELECT 
-    mi.id,
-    mi.name,
-    mi.restaurantId,
+    d.id,
+    d.name,
+    d.restaurantId,
     r.name as restaurantName,
     SUM(oi.quantity) as totalQuantitySold,
     COUNT(DISTINCT oi.orderId) as orderCount
 FROM OrderItems oi
-INNER JOIN MenuItems mi ON oi.menuItemId = mi.id
-INNER JOIN Restaurants r ON mi.restaurantId = r.id
+INNER JOIN Dishes d ON oi.dishId = d.id
+INNER JOIN Restaurants r ON d.restaurantId = r.id
 INNER JOIN Orders o ON oi.orderId = o.id
 WHERE o.placedAt BETWEEN ? AND ?
     AND o.status != 'cancelled'
-GROUP BY mi.id, mi.name, mi.restaurantId, r.name
+GROUP BY d.id, d.name, d.restaurantId, r.name
 ORDER BY totalQuantitySold DESC
 LIMIT ? OFFSET ?;
 ```
@@ -88,20 +88,20 @@ LIMIT ? OFFSET ?;
 
 ```sql
 SELECT 
-    mi.id,
-    mi.name,
-    mi.restaurantId,
+    d.id,
+    d.name,
+    d.restaurantId,
     r.name as restaurantName,
     SUM(oi.subtotal) as totalRevenue,
     SUM(oi.quantity) as totalQuantitySold,
     COUNT(DISTINCT oi.orderId) as orderCount
 FROM OrderItems oi
-INNER JOIN MenuItems mi ON oi.menuItemId = mi.id
-INNER JOIN Restaurants r ON mi.restaurantId = r.id
+INNER JOIN Dishes d ON oi.dishId = d.id
+INNER JOIN Restaurants r ON d.restaurantId = r.id
 INNER JOIN Orders o ON oi.orderId = o.id
 WHERE o.placedAt BETWEEN ? AND ?
     AND o.status != 'cancelled'
-GROUP BY mi.id, mi.name, mi.restaurantId, r.name
+GROUP BY d.id, d.name, d.restaurantId, r.name
 ORDER BY totalRevenue DESC
 LIMIT ? OFFSET ?;
 ```
@@ -110,20 +110,20 @@ LIMIT ? OFFSET ?;
 
 ```sql
 SELECT 
-    mi.id,
-    mi.name,
-    mi.restaurantId,
+    d.id,
+    d.name,
+    d.restaurantId,
     r.name as restaurantName,
     SUM(oi.subtotal) as totalRevenue,
     SUM(oi.quantity) as totalQuantitySold
 FROM OrderItems oi
-INNER JOIN MenuItems mi ON oi.menuItemId = mi.id
-INNER JOIN Restaurants r ON mi.restaurantId = r.id
+INNER JOIN Dishes d ON oi.dishId = d.id
+INNER JOIN Restaurants r ON d.restaurantId = r.id
 INNER JOIN Orders o ON oi.orderId = o.id
 WHERE o.restaurantId = ?
     AND o.placedAt BETWEEN ? AND ?
     AND o.status != 'cancelled'
-GROUP BY mi.id, mi.name, mi.restaurantId, r.name
+GROUP BY d.id, d.name, d.restaurantId, r.name
 ORDER BY totalRevenue DESC
 LIMIT ? OFFSET ?;
 ```
@@ -254,11 +254,11 @@ The following indexes optimize reporting queries:
 
 2. **OrderItems Table:**
    - `orderId` - For joining with Orders
-   - `menuItemId` - For joining with MenuItems
-   - `(orderId, menuItemId)` - Composite index for order detail queries
+   - `dishId` - For joining with Dishes
+   - `(orderId, dishId)` - Composite index for order detail queries
 
-3. **MenuItems Table:**
-   - `restaurantId` - For restaurant-specific item queries
+3. **Dishes Table:**
+   - `restaurantId` - For restaurant-specific dish queries
 
 ### Query Optimization Tips
 
@@ -282,8 +282,8 @@ For datasets with 10,000+ orders:
 ```sql
 -- Use subquery to filter orders first, then join
 SELECT 
-    mi.id,
-    mi.name,
+    d.id,
+    d.name,
     SUM(oi.subtotal) as totalRevenue
 FROM OrderItems oi
 INNER JOIN (
@@ -291,8 +291,8 @@ INNER JOIN (
     WHERE placedAt BETWEEN ? AND ? 
         AND status != 'cancelled'
 ) o ON oi.orderId = o.id
-INNER JOIN MenuItems mi ON oi.menuItemId = mi.id
-GROUP BY mi.id, mi.name
+INNER JOIN Dishes d ON oi.dishId = d.id
+GROUP BY d.id, d.name
 ORDER BY totalRevenue DESC
 LIMIT 20;
 ```

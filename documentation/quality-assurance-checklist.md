@@ -45,7 +45,7 @@ Use this checklist to evaluate whether the backend API is ready for submission. 
 - [ ] Database validation at model level where appropriate
 
 ## Database & Data Modeling
-- [ ] All database models created (Users, Restaurants, MenuCategories, MenuItems, Orders, OrderItems, Ratings, RefreshTokens)
+- [ ] All database models created (Users, Restaurants, MenuCategories, Dishes, Orders, OrderItems, Ratings, RefreshTokens)
 - [ ] Model associations defined correctly
 - [ ] Foreign key constraints enforced
 - [ ] Database validations added at model level
@@ -91,7 +91,7 @@ Use this checklist to evaluate whether the backend API is ready for submission. 
 - [ ] Faker.js integrated for data generation
 - [ ] Restaurant seeder implemented
 - [ ] Menu category seeder implemented
-- [ ] Menu item seeder implemented
+- [ ] Dish seeder implemented
 - [ ] Order seeder generates 10,000+ orders
 - [ ] Order items seeded with realistic data
 - [ ] Seeder runner executes all seeders in correct order

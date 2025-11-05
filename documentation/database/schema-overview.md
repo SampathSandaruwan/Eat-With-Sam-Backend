@@ -9,19 +9,19 @@ The database consists of 8 core entities with the following relationships:
 ### One-to-Many Relationships
 
 1. **Users → Orders**: A user can place multiple orders
-2. **Users → Ratings**: A user can rate multiple menu items
+2. **Users → Ratings**: A user can rate multiple dishes
 3. **Users → RefreshTokens**: A user can have multiple refresh tokens (for device management)
 4. **Restaurants → MenuCategories**: Each restaurant has multiple menu categories
 5. **Restaurants → Orders**: A restaurant receives multiple orders
-6. **MenuCategories → MenuItems**: Each category contains multiple menu items
+6. **MenuCategories → Dishes**: Each category contains multiple dishes
 7. **Orders → OrderItems**: Each order contains multiple order items
-8. **MenuItems → OrderItems**: The same menu item can appear in multiple orders
-9. **MenuItems → Ratings**: A menu item can receive multiple ratings
+8. **Dishes → OrderItems**: The same dish can appear in multiple orders
+9. **Dishes → Ratings**: A dish can receive multiple ratings
 
 ### Many-to-One Relationships
 
 All one-to-many relationships have corresponding many-to-one relationships:
-- **OrderItems → MenuItems**: Many order items reference the same menu item
+- **OrderItems → Dishes**: Many order items reference the same dish
 - **OrderItems → Orders**: Many order items belong to the same order
 - And all reverse relationships of the one-to-many relationships listed above
 
@@ -59,18 +59,18 @@ All one-to-many relationships have corresponding many-to-one relationships:
 
 ---
 
-### MenuCategories → MenuItems (One-to-Many)
+### MenuCategories → Dishes (One-to-Many)
 
-**Purpose**: Organize menu items into logical categories.
+**Purpose**: Organize dishes into logical categories.
 
 **Implementation**:
-- `MenuItems` table has `categoryId` foreign key
-- Menu items are grouped by category for display
+- `Dishes` table has `categoryId` foreign key
+- Dishes are grouped by category for display
 - Supports menu navigation by category
 
 **Example**:
 - Category "Main Course" contains: "Chicken Burger", "Beef Steak", "Fish & Chips"
-- All items have `categoryId = "main-course-id"`
+- All dishes have `categoryId = "main-course-id"`
 
 ---
 
@@ -91,41 +91,41 @@ All one-to-many relationships have corresponding many-to-one relationships:
 
 ---
 
-### OrderItems → MenuItems (Many-to-One)
+### OrderItems → Dishes (Many-to-One)
 
-**Purpose**: Link order items to the menu items they represent.
+**Purpose**: Link order items to the dishes they represent.
 
-**Why Many-to-One**: The same menu item (e.g., "Chicken Burger") can appear in many different orders. This normalizes data and allows:
-- Tracking popular items across all orders
+**Why Many-to-One**: The same dish (e.g., "Chicken Burger") can appear in many different orders. This normalizes data and allows:
+- Tracking popular dishes across all orders
 - Maintaining referential integrity
 - Price consistency (with snapshot for historical accuracy)
 
 **Implementation**:
-- `OrderItems` table has `menuItemId` foreign key
-- Many order items can reference the same menu item
+- `OrderItems` table has `dishId` foreign key
+- Many order items can reference the same dish
 - Price snapshot stored in OrderItem for historical accuracy (prices may change)
 
 **Example**:
-- MenuItem #101: "Chicken Burger" (£12.99)
-- Order #1, OrderItem #1: `menuItemId = 101`, quantity = 2
-- Order #2, OrderItem #1: `menuItemId = 101`, quantity = 1
-- Order #3, OrderItem #1: `menuItemId = 101`, quantity = 3
+- Dish #101: "Chicken Burger" (£12.99)
+- Order #1, OrderItem #1: `dishId = 101`, quantity = 2
+- Order #2, OrderItem #1: `dishId = 101`, quantity = 1
+- Order #3, OrderItem #1: `dishId = 101`, quantity = 3
 
-All reference the same menu item, enabling analytics like "most ordered item".
+All reference the same dish, enabling analytics like "most ordered dish".
 
 ---
 
-### MenuItems → Ratings (One-to-Many)
+### Dishes → Ratings (One-to-Many)
 
-**Purpose**: Allow users to rate and review menu items.
+**Purpose**: Allow users to rate and review dishes.
 
 **Implementation**:
-- `Ratings` table has `menuItemId` foreign key
-- Multiple users can rate the same menu item
+- `Ratings` table has `dishId` foreign key
+- Multiple users can rate the same dish
 - Supports average rating calculations
 
 **Example**:
-- MenuItem "Chicken Burger" receives ratings: 5, 4, 5, 3, 5
+- Dish "Chicken Burger" receives ratings: 5, 4, 5, 3, 5
 - Average rating: 4.4 stars
 
 ---
@@ -147,17 +147,17 @@ All reference the same menu item, enabling analytics like "most ordered item".
 
 ### 1. Normalization
 - Data is normalized to reduce redundancy
-- Menu item details stored once, referenced by orders
+- Dish details stored once, referenced by orders
 - Category organization per restaurant, not global
 
 ### 2. Historical Data Integrity
 - OrderItems store `priceAtOrder` to maintain historical pricing
-- Menu item prices can change, but past orders retain original price
+- Dish prices can change, but past orders retain original price
 
 ### 3. Referential Integrity
 - Foreign key constraints ensure data consistency
 - Cannot create order for non-existent user or restaurant
-- Cannot create order item for non-existent menu item
+- Cannot create order item for non-existent dish
 
 ### 4. Performance Optimization
 - Indexes on foreign keys for fast joins
@@ -172,10 +172,10 @@ All reference the same menu item, enabling analytics like "most ordered item".
 | **RefreshTokens** | JWT token storage | id, token, userId, expiresAt |
 | **Restaurants** | Restaurant information | id, name, address, cuisineType |
 | **MenuCategories** | Menu organization | id, name, restaurantId |
-| **MenuItems** | Food items/products | id, name, price, categoryId, restaurantId |
+| **Dishes** | Food items/products | id, name, price, categoryId, restaurantId |
 | **Orders** | Order headers | id, userId, restaurantId, status, totalAmount |
-| **OrderItems** | Order line items | id, orderId, menuItemId, quantity, priceAtOrder |
-| **Ratings** | Reviews/ratings | id, userId, menuItemId, rating, comment |
+| **OrderItems** | Order line items | id, orderId, dishId, quantity, priceAtOrder |
+| **Ratings** | Reviews/ratings | id, userId, dishId, rating, comment |
 
 For detailed table schemas, see the individual table documentation files in the [tables](./tables/) directory.
 

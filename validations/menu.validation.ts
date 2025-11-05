@@ -13,11 +13,11 @@ export const filterMenuCategoriesSchema = z.object({
   }),
 });
 
-export const menuItemIdPathParamSchema = z.object({
-  params: z.object({ menuItemId: idPathParamField }),
+export const dishIdPathParamSchema = z.object({
+  params: z.object({ dishId: idPathParamField }),
 });
 
-export const filterMenuItemsSchema = z.object({
+export const filterDishesSchema = z.object({
   query: z.object({
     ...getPaginationFields('createdAt', ['createdAt', 'averageRating', 'price', 'discountPercent'] as const),
     categoryId: z
@@ -61,7 +61,7 @@ export const updateMenuCategorySchema = z.object({
   }).strict(),
 });
 
-export const createMenuItemSchema = z.object({
+export const createDishSchema = z.object({
   body: z.object({
     name: z.string().min(1).max(255),
     description: z.string().optional().nullable(),
@@ -77,7 +77,7 @@ export const createMenuItemSchema = z.object({
   }).strict(),
 });
 
-export const updateMenuItemSchema = z.object({
+export const updateDishSchema = z.object({
   body: z.object({
     name: z.string().min(1).max(255).optional(),
     description: z.string().optional().nullable(),

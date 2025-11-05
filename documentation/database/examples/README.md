@@ -15,7 +15,7 @@ These scripts help validate and explain design decisions made during the databas
 
 **File**: `rating-precision-validation.ts`
 
-**Purpose**: Validates the decision to use `DECIMAL(9, 8)` for storing average ratings in the `MenuItems` table.
+**Purpose**: Validates the decision to use `DECIMAL(9, 8)` for storing average ratings in the `Dishes` table.
 
 **What it demonstrates**:
 - How precision is maintained over millions of rating calculations

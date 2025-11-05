@@ -12,9 +12,9 @@ export const DATABASE_MODELS: {
     TABLE_NAME: 'MenuCategories',
     MODEL_NAME: 'MenuCategory',
   },
-  MENU_ITEMS: {
-    TABLE_NAME: 'MenuItems',
-    MODEL_NAME: 'MenuItem',
+  DISHES: {
+    TABLE_NAME: 'Dishes',
+    MODEL_NAME: 'Dish',
   },
   USERS: {
     TABLE_NAME: 'Users',

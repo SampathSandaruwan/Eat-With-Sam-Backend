@@ -2,11 +2,11 @@ import { FOOD_IMAGE_URLS } from '../utils/constants';
 import { faker, SeederOptions } from '../utils/helpers';
 
 import {
+  DishModel,
   MenuCategoryModel,
-  MenuItemModel,
   RestaurantModel,
 } from '../../models';
-import { MenuCategory, MenuItem, Restaurant } from '../../types';
+import { Dish, MenuCategory, Restaurant } from '../../types';
 
 const foodItems = [
   'Burger',
@@ -63,7 +63,7 @@ const allergens = [
 
 type RestaurantWithCategories = Restaurant & { menuCategories: MenuCategory[] };
 
-export const seedMenuItems = async (
+export const seedDishes = async (
   options: SeederOptions = {},
 ): Promise<void> => {
   const count = options.count || 50;
@@ -96,10 +96,10 @@ export const seedMenuItems = async (
   }
 
   console.log(
-    `Creating ${count} menu items across ${restaurantsWithCategories.length} restaurants...`,
+    `Creating ${count} dishes across ${restaurantsWithCategories.length} restaurants...`,
   );
 
-  const menuItems: Omit<MenuItem, 'id'>[] = [];
+  const dishes: Omit<Dish, 'id'>[] = [];
   const itemsPerRestaurant = Math.ceil(count / restaurantsWithCategories.length);
 
   for (const restaurant of restaurantsWithCategories) {
@@ -109,7 +109,7 @@ export const seedMenuItems = async (
       max: Math.max(itemsPerRestaurant + 5, 15),
     });
 
-    for (let i = 0; i < itemsForRestaurant && menuItems.length < count; i++) {
+    for (let i = 0; i < itemsForRestaurant && dishes.length < count; i++) {
       const category = faker.helpers.arrayElement(restaurantCategories);
       const foodItem = faker.helpers.arrayElement(foodItems);
       const itemName = `${faker.helpers.arrayElement(['Premium', 'Classic', 'Spicy', 'Deluxe', 'Special', 'Signature', ''])} ${foodItem}`.trim();
@@ -121,7 +121,7 @@ export const seedMenuItems = async (
           .sort()
         : null;
 
-      // Generate allergens (3-10 per menu item)
+      // Generate allergens (3-10 per dish)
       const allergensList: string[] = faker.helpers
         .arrayElements(allergens, { min: 3, max: 10 })
         .sort();
@@ -132,7 +132,7 @@ export const seedMenuItems = async (
           ? faker.number.int({ min: 10, max: 50 })
           : null;
 
-      menuItems.push({
+      dishes.push({
         name: itemName,
         description: faker.lorem.paragraph(),
         price: Number(faker.number.float({ min: 5, max: 50, fractionDigits: 2 })),
@@ -154,7 +154,7 @@ export const seedMenuItems = async (
     }
   }
 
-  await MenuItemModel.bulkCreate(menuItems);
-  console.log(`Seeded ${menuItems.length} MenuItem records`);
+  await DishModel.bulkCreate(dishes);
+  console.log(`Seeded ${dishes.length} Dish records`);
 };
 

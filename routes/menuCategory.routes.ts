@@ -5,13 +5,14 @@ import {
   deleteMenuCategory,
   getAllCategories,
   getCategoryById,
-  getMenuItemsByCategoryId,
+  getDishesByCategoryId,
   updateMenuCategory,
 } from '../controllers';
 import { validate } from '../middlewares';
 import {
   createMenuCategorySchema,
-  filterMenuItemsSchema,
+  filterDishesSchema,
+  filterMenuCategoriesSchema,
   menuCategoryIdPathParamSchema,
   updateMenuCategorySchema,
 } from '../validations';
@@ -26,14 +27,14 @@ router.post(
 
 router.get(
   '',
-  validate(filterMenuItemsSchema),
+  validate(filterMenuCategoriesSchema),
   getAllCategories,
 );
 
 router.get(
   '/:categoryId',
   validate(menuCategoryIdPathParamSchema),
-  validate(filterMenuItemsSchema),
+  validate(filterMenuCategoriesSchema),
   getCategoryById,
 );
 
@@ -51,10 +52,10 @@ router.delete(
 );
 
 router.get(
-  '/:categoryId/menu-items',
+  '/:categoryId/dishes',
   validate(menuCategoryIdPathParamSchema),
-  validate(filterMenuItemsSchema),
-  getMenuItemsByCategoryId,
+  validate(filterDishesSchema),
+  getDishesByCategoryId,
 );
 
 export default router;

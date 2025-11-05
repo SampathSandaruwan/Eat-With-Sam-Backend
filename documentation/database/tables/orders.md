@@ -89,9 +89,9 @@ Stores individual line items within an order, including quantity, price snapshot
 |--------|------|-------------|-------------|
 | `id` | INT (AUTO_INCREMENT) | PRIMARY KEY | Unique order item identifier |
 | `orderId` | INT | NOT NULL, FOREIGN KEY | Parent order |
-| `menuItemId` | INT | NOT NULL, FOREIGN KEY | Menu item being ordered |
+| `dishId` | INT | NOT NULL, FOREIGN KEY | Dish being ordered |
 | `quantity` | INT | NOT NULL, DEFAULT 1 | Quantity ordered |
-| `priceAtOrder` | DECIMAL(10, 2) | NOT NULL | Menu item price at time of order |
+| `priceAtOrder` | DECIMAL(10, 2) | NOT NULL | Dish price at time of order |
 | `subtotal` | DECIMAL(10, 2) | NOT NULL | Line total (quantity × priceAtOrder) |
 | `specialInstructions` | TEXT | | Item-specific instructions |
 | `createdAt` | DATETIME | NOT NULL | Record creation timestamp |
@@ -101,8 +101,8 @@ Stores individual line items within an order, including quantity, price snapshot
 
 - **PRIMARY KEY** on `id`
 - **INDEX** on `orderId` (foreign key)
-- **INDEX** on `menuItemId` (foreign key)
-- **COMPOSITE INDEX** on `(orderId, menuItemId)` (for order detail queries)
+- **INDEX** on `dishId` (foreign key)
+- **COMPOSITE INDEX** on `(orderId, dishId)` (for order detail queries)
 
 ### Relationships
 
@@ -111,37 +111,37 @@ Stores individual line items within an order, including quantity, price snapshot
   - Cascade: Delete order items when order is deleted
   - Description: Many order items belong to one order
 
-- **OrderItems → MenuItems** (Many-to-One)
-  - Foreign key: `menuItemId` references `MenuItems.id`
-  - Cascade: Restrict delete (cannot delete menu item with order history)
-  - Description: Many order items can reference the same menu item
+- **OrderItems → Dishes** (Many-to-One)
+  - Foreign key: `dishId` references `Dishes.id`
+  - Cascade: Restrict delete (cannot delete dish with order history)
+  - Description: Many order items can reference the same dish
 
-**Why OrderItems → MenuItems Many-to-One**: The same menu item (e.g., "Chicken Burger") can appear in many different orders. This design:
-- **Normalizes data**: Menu item details stored once
-- **Enables analytics**: Track popular items across all orders
-- **Maintains integrity**: Order items reference valid menu items
+**Why OrderItems → Dishes Many-to-One**: The same dish (e.g., "Chicken Burger") can appear in many different orders. This design:
+- **Normalizes data**: Dish details stored once
+- **Enables analytics**: Track popular dishes across all orders
+- **Maintains integrity**: Order items reference valid dishes
 - **Historical pricing**: `priceAtOrder` stores price at order time (even if menu price changes later)
 
 **Example**:
 ```
-MenuItem #101: "Chicken Burger" (£12.99)
+Dish #101: "Chicken Burger" (£12.99)
 
-OrderItem #1: orderId=1, menuItemId=101, quantity=2, priceAtOrder=12.99, subtotal=25.98
-OrderItem #2: orderId=2, menuItemId=101, quantity=1, priceAtOrder=12.99, subtotal=12.99
-OrderItem #3: orderId=3, menuItemId=101, quantity=3, priceAtOrder=12.99, subtotal=38.97
+OrderItem #1: orderId=1, dishId=101, quantity=2, priceAtOrder=12.99, subtotal=25.98
+OrderItem #2: orderId=2, dishId=101, quantity=1, priceAtOrder=12.99, subtotal=12.99
+OrderItem #3: orderId=3, dishId=101, quantity=3, priceAtOrder=12.99, subtotal=38.97
 ```
 
-All three order items reference the same menu item, allowing queries like "How many Chicken Burgers were ordered?" or "What's the most popular item?"
+All three order items reference the same dish, allowing queries like "How many Chicken Burgers were ordered?" or "What's the most popular dish?"
 
 ### Example Data
 
 ```sql
-id | orderId | menuItemId | quantity | priceAtOrder | subtotal
----|--------|------------|----------|--------------|----------
-1  | 1      | 101        | 2        | 12.99        | 25.98
-2  | 1      | 205        | 1        | 4.99         | 4.99
-3  | 1      | 310        | 3        | 2.50         | 7.50
-4  | 2      | 101        | 1        | 12.99        | 12.99
+id | orderId | dishId | quantity | priceAtOrder | subtotal
+---|--------|--------|----------|--------------|----------
+1  | 1      | 101    | 2        | 12.99        | 25.98
+2  | 1      | 205    | 1        | 4.99         | 4.99
+3  | 1      | 310    | 3        | 2.50         | 7.50
+4  | 2      | 101    | 1        | 12.99        | 12.99
 ```
 
 ## Order Calculation
@@ -163,7 +163,7 @@ totalAmount = subtotal + deliveryFee + taxAmount
 - Generated at application level (not auto-increment)
 
 ### Historical Data
-- `priceAtOrder` is a snapshot of menu item price at order time
+- `priceAtOrder` is a snapshot of dish price at order time
 - Important for order accuracy even if menu prices change
 - `deliveryAddress` is also a snapshot (user address may change)
 

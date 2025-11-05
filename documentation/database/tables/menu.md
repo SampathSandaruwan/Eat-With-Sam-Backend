@@ -1,12 +1,12 @@
 # Menu Tables
 
-This document covers both **MenuCategories** and **MenuItems** tables, which work together to organize and display restaurant menus.
+This document covers both **MenuCategories** and **Dishes** tables, which work together to organize and display restaurant menus.
 
 ## MenuCategories Table
 
 ### Purpose
 
-Organizes menu items into logical categories specific to each restaurant (e.g., "Appetizers", "Main Course", "Desserts").
+Organizes dishes into logical categories specific to each restaurant (e.g., "Appetizers", "Main Course", "Desserts").
 
 ### Schema
 
@@ -35,10 +35,10 @@ Organizes menu items into logical categories specific to each restaurant (e.g., 
   - Cascade: Delete categories when restaurant is deleted
   - Description: Many categories belong to one restaurant
 
-- **MenuCategories → MenuItems** (One-to-Many)
-  - Foreign key: `MenuItems.categoryId`
-  - Cascade: Restrict delete (cannot delete category with items)
-  - Description: One category contains many menu items
+- **MenuCategories → Dishes** (One-to-Many)
+  - Foreign key: `Dishes.categoryId`
+  - Cascade: Restrict delete (cannot delete category with dishes)
+  - Description: One category contains many dishes
 
 ### Example Data
 
@@ -53,7 +53,7 @@ id | name        | restaurantId | displayOrder | isActive
 
 ---
 
-## MenuItems Table
+## Dishes Table
 
 ### Purpose
 
@@ -63,7 +63,7 @@ Stores individual dishes/products available in restaurant menus.
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
-| `id` | INT (AUTO_INCREMENT) | PRIMARY KEY | Unique menu item identifier |
+| `id` | INT (AUTO_INCREMENT) | PRIMARY KEY | Unique dish identifier |
 | `name` | VARCHAR(255) | NOT NULL | Item name |
 | `description` | TEXT | | Item description |
 | `price` | DECIMAL(10, 2) | NOT NULL | Item price |
@@ -90,25 +90,25 @@ Stores individual dishes/products available in restaurant menus.
 
 ### Relationships
 
-- **MenuItems → MenuCategories** (Many-to-One)
+- **Dishes → MenuCategories** (Many-to-One)
   - Foreign key: `categoryId` references `MenuCategories.id`
-  - Cascade: Restrict delete (cannot delete category with items)
-  - Description: Many menu items belong to one category
+  - Cascade: Restrict delete (cannot delete category with dishes)
+  - Description: Many dishes belong to one category
 
-- **MenuItems → Restaurants** (Many-to-One)
+- **Dishes → Restaurants** (Many-to-One)
   - Foreign key: `restaurantId` references `Restaurants.id`
-  - Cascade: Restrict delete (cannot delete restaurant with items)
-  - Description: Many menu items belong to one restaurant
+  - Cascade: Restrict delete (cannot delete restaurant with dishes)
+  - Description: Many dishes belong to one restaurant
 
-- **MenuItems → OrderItems** (One-to-Many)
-  - Foreign key: `OrderItems.menuItemId`
-  - Cascade: Restrict delete (cannot delete item with order history)
-  - Description: One menu item can be referenced by many order items
+- **Dishes → OrderItems** (One-to-Many)
+  - Foreign key: `OrderItems.dishId`
+  - Cascade: Restrict delete (cannot delete dish with order history)
+  - Description: One dish can be referenced by many order items
 
-- **MenuItems → Ratings** (One-to-Many)
-  - Foreign key: `Ratings.menuItemId`
-  - Cascade: Delete ratings when item is deleted
-  - Description: One menu item can receive many ratings
+- **Dishes → Ratings** (One-to-Many)
+  - Foreign key: `Ratings.dishId`
+  - Cascade: Delete ratings when dish is deleted
+  - Description: One dish can receive many ratings
 
 ### Example Data
 
@@ -147,20 +147,20 @@ id | name            | price  | categoryId | restaurantId | averageRating | isAv
 - `displayOrder` controls menu display sequence
 - Categories can be hidden via `isActive` without deleting items
 
-### Menu Items
+### Dishes
 - `price` is stored in the currency format (no currency field, assumed single currency)
-- `isAvailable` allows temporarily disabling items (out of stock, etc.)
+- `isAvailable` allows temporarily disabling dishes (out of stock, etc.)
 - `tags` JSON field allows flexible dietary filtering
 - Consider caching `averageRating` to avoid frequent calculations
 - **Rating Precision**: `averageRating` is stored with high precision (`DECIMAL(9, 8)`). Always round to 1-2 decimal places only in the UI/API response, never truncate in the database to maintain calculation accuracy. See [rating precision validation script](../examples/rating-precision-validation.ts) for a demonstration of why this precision is necessary.
 
 #### Redundant `restaurantId` Field
 
-**Design Decision**: The `restaurantId` field on MenuItems is technically redundant since we can derive the restaurant through the category relationship (`MenuItem → MenuCategory → Restaurant`). However, it is kept for the following reasons:
+**Design Decision**: The `restaurantId` field on Dishes is technically redundant since we can derive the restaurant through the category relationship (`Dish → MenuCategory → Restaurant`). However, it is kept for the following reasons:
 
 **Reasons to Keep:**
 1. **Performance**: Enables direct queries like "get all items from Restaurant X" without joining through categories
-2. **Data Integrity**: Provides direct foreign key constraint ensuring menu item belongs to restaurant
+2. **Data Integrity**: Provides direct foreign key constraint ensuring dish belongs to restaurant
 3. **Query Simplicity**: Common query pattern ("all items by restaurant") is faster with direct relationship
 4. **Index Optimization**: Index on `restaurantId` enables efficient restaurant-scoped queries
 
