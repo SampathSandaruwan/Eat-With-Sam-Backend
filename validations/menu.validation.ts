@@ -19,7 +19,7 @@ export const menuItemIdPathParamSchema = z.object({
 
 export const filterMenuItemsSchema = z.object({
   query: z.object({
-    ...getPaginationFields('createdAt', ['createdAt', 'averageRating', 'price'] as const),
+    ...getPaginationFields('createdAt', ['createdAt', 'averageRating', 'price', 'discountPercent'] as const),
     categoryId: z
       .string()
       .regex(/^\d+$/)
@@ -69,6 +69,7 @@ export const createMenuItemSchema = z.object({
     imageUri: z.string().max(500).optional().nullable(),
     kcal: z.number().int().min(0).optional().nullable(),
     tags: z.array(z.string()).optional().nullable(),
+    allergens: z.array(z.string()).optional().nullable(),
     discountPercent: z.number().min(0).max(100).optional().nullable(),
     isAvailable: z.boolean().default(true),
     categoryId: z.number().int().positive(),
@@ -84,6 +85,7 @@ export const updateMenuItemSchema = z.object({
     imageUri: z.string().max(500).optional().nullable(),
     kcal: z.number().int().min(0).optional().nullable(),
     tags: z.array(z.string()).optional().nullable(),
+    allergens: z.array(z.string()).optional().nullable(),
     discountPercent: z.number().min(0).max(100).optional().nullable(),
     isAvailable: z.boolean().optional(),
   }).strict(),

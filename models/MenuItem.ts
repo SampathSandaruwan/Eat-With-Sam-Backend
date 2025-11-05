@@ -6,7 +6,7 @@ import type { MenuItem } from '../types';
 
 type MenuItemCreationAttributes = Optional<
   MenuItem,
-  'id' | 'description' | 'imageUri' | 'kcal' | 'tags' | 'discountPercent' | 'createdAt' | 'updatedAt'
+  'id' | 'description' | 'imageUri' | 'kcal' | 'tags' | 'allergens' | 'discountPercent' | 'createdAt' | 'updatedAt'
 >;
 
 class MenuItemModel
@@ -20,6 +20,7 @@ class MenuItemModel
   public imageUri?: string | null;
   public kcal?: number | null;
   public tags?: string[] | null;
+  public allergens?: string[] | null;
   public discountPercent?: number | null;
   public isAvailable!: boolean;
   public categoryId!: number;
@@ -72,6 +73,10 @@ MenuItemModel.init(
       },
     },
     tags: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
+    allergens: {
       type: DataTypes.JSON,
       allowNull: true,
     },

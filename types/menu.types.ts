@@ -17,6 +17,7 @@ export interface MenuItem {
   imageUri?: string | null;
   kcal?: number | null;
   tags?: string[] | null;
+  allergens?: string[] | null;
   discountPercent?: number | null;
   isAvailable: boolean;
   categoryId: number;
