@@ -18,7 +18,7 @@
 const DECIMAL_PRECISION = 8; // Database precision: DECIMAL(9, 8) = 8 decimal places
 const DISPLAY_PRECISION = 3; // UI display precision (2-3 decimal places for ratings)
 
-// Simulate a menu item with initial high rating and many existing ratings
+// Simulate a dish with initial high rating and many existing ratings
 const initialRating = 5.0;
 const initialCount = 1000000;
 const newRatingsCount = 10000;

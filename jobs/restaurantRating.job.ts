@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { Op } from 'sequelize';
 
-import { MenuItemModel, RestaurantModel } from '../models';
+import { DishModel, RestaurantModel } from '../models';
 
 interface RatingCalculationResult {
   success: boolean;
@@ -11,9 +11,9 @@ interface RatingCalculationResult {
 }
 
 /**
- * Calculate restaurant average rating from menu items
- * Uses weighted average: (sum of menuItem.averageRating * menuItem.ratingCount) / total ratingCount
- * This ensures restaurants with more rated items have accurate overall ratings
+ * Calculate restaurant average rating from dishes
+ * Uses weighted average: (sum of dish.averageRating * dish.ratingCount) / total ratingCount
+ * This ensures restaurants with more rated dishes have accurate overall ratings
  */
 export const calculateRestaurantRatings = async (): Promise<RatingCalculationResult> => {
   try {
@@ -29,8 +29,8 @@ export const calculateRestaurantRatings = async (): Promise<RatingCalculationRes
 
     for (const restaurant of restaurants) {
       try {
-        // Get all menu items for this restaurant with their ratings
-        const menuItems = await MenuItemModel.findAll({
+        // Get all dishes for this restaurant with their ratings
+        const dishes = await DishModel.findAll({
           where: {
             restaurantId: restaurant.id,
             ratingCount: {
@@ -40,7 +40,7 @@ export const calculateRestaurantRatings = async (): Promise<RatingCalculationRes
           attributes: ['averageRating', 'ratingCount'],
         });
 
-        if (menuItems.length === 0) {
+        if (dishes.length === 0) {
           // No rated items - set to 0
           await RestaurantModel.update(
             {
@@ -62,7 +62,7 @@ export const calculateRestaurantRatings = async (): Promise<RatingCalculationRes
         let totalWeightedRating = 0;
         let totalRatingCount = 0;
 
-        for (const item of menuItems) {
+        for (const item of dishes) {
           const rating = Number(item.averageRating);
           const count = item.ratingCount;
           if (rating > 0 && count > 0) {

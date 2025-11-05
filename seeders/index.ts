@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
+import { seedDishes } from './fixtures/dishes';
 import { seedMenuCategories } from './fixtures/menuCategories';
-import { seedMenuItems } from './fixtures/menuItems';
 import { seedRestaurants } from './fixtures/restaurants';
 
 import { sequelize, testConnection } from '../config/database';
-import { MenuCategoryModel, MenuItemModel, RestaurantModel } from '../models';
+import { DishModel, MenuCategoryModel, RestaurantModel } from '../models';
 
 const SEEDING_CONFIG = {
   RESTAURANTS: {
@@ -12,11 +12,11 @@ const SEEDING_CONFIG = {
     CLEAR_EXISTING: false,
   },
   MENU_CATEGORIES: {
-    COUNT: 5,
+    COUNT: 0,
     CLEAR_EXISTING: false,
   },
-  MENU_ITEMS: {
-    COUNT: 10,
+  DISHES: {
+    COUNT: 1000,
     CLEAR_EXISTING: false,
   },
 };
@@ -38,8 +38,8 @@ const runSeeders = async (): Promise<void> => {
     console.log('Database models synced');
 
     console.log('\nClearing existing data...');
-    if (SEEDING_CONFIG.MENU_ITEMS.CLEAR_EXISTING) {
-      await MenuItemModel.destroy({ where: {}, force: true });
+    if (SEEDING_CONFIG.DISHES.CLEAR_EXISTING) {
+      await DishModel.destroy({ where: {}, force: true });
     }
     if (SEEDING_CONFIG.MENU_CATEGORIES.CLEAR_EXISTING) {
       await MenuCategoryModel.destroy({ where: {}, force: true });
@@ -56,8 +56,8 @@ const runSeeders = async (): Promise<void> => {
     console.log('\nSeeding Menu Categories...');
     await seedMenuCategories({ count: SEEDING_CONFIG.MENU_CATEGORIES.COUNT });
 
-    console.log('\nSeeding Menu Items...');
-    await seedMenuItems({ count: SEEDING_CONFIG.MENU_ITEMS.COUNT });
+    console.log('\nSeeding Dishes...');
+    await seedDishes({ count: SEEDING_CONFIG.DISHES.COUNT });
 
     console.log('\nDatabase seeding completed successfully!');
   } catch (error) {

@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 
+import { TokenPayload } from '../types';
+
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 const ACCESS_TOKEN_EXPIRY = process.env.ACCESS_TOKEN_EXPIRY || '15m';
@@ -38,11 +40,6 @@ _validateExpiryFormat(REFRESH_TOKEN_EXPIRY, 'REFRESH_TOKEN_EXPIRY');
 // Type assertions after validation
 const JWT_SECRET_STRING: string = JWT_SECRET;
 const JWT_REFRESH_SECRET_STRING: string = JWT_REFRESH_SECRET;
-
-interface TokenPayload {
-  userId: number;
-  email: string;
-}
 
 /**
  * Generate a short-lived access token

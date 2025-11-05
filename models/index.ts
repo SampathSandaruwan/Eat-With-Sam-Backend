@@ -1,5 +1,5 @@
+import DishModel from './Dish';
 import MenuCategoryModel from './MenuCategory';
-import MenuItemModel from './MenuItem';
 import RefreshTokenModel from './RefreshToken';
 import RestaurantModel from './Restaurant';
 import UserModel from './User';
@@ -12,9 +12,9 @@ RestaurantModel.hasMany(MenuCategoryModel, {
   onDelete: 'CASCADE',
 });
 
-RestaurantModel.hasMany(MenuItemModel, {
+RestaurantModel.hasMany(DishModel, {
   foreignKey: 'restaurantId',
-  as: 'menuItems',
+  as: 'dishes',
   onDelete: 'RESTRICT',
 });
 
@@ -24,19 +24,19 @@ MenuCategoryModel.belongsTo(RestaurantModel, {
   as: 'restaurant',
 });
 
-MenuCategoryModel.hasMany(MenuItemModel, {
+MenuCategoryModel.hasMany(DishModel, {
   foreignKey: 'categoryId',
-  as: 'menuItems',
+  as: 'dishes',
   onDelete: 'RESTRICT',
 });
 
-// MenuItem associations
-MenuItemModel.belongsTo(MenuCategoryModel, {
+// Dish associations
+DishModel.belongsTo(MenuCategoryModel, {
   foreignKey: 'categoryId',
   as: 'category',
 });
 
-MenuItemModel.belongsTo(RestaurantModel, {
+DishModel.belongsTo(RestaurantModel, {
   foreignKey: 'restaurantId',
   as: 'restaurant',
 });
@@ -53,5 +53,5 @@ RefreshTokenModel.belongsTo(UserModel, {
   as: 'user',
 });
 
-export { MenuCategoryModel, MenuItemModel, RefreshTokenModel, RestaurantModel, UserModel };
+export { DishModel, MenuCategoryModel, RefreshTokenModel, RestaurantModel, UserModel };
 

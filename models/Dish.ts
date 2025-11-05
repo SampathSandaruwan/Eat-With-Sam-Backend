@@ -2,16 +2,16 @@ import { DataTypes, Model, Optional } from 'sequelize';
 
 import { sequelize } from '../config/database';
 import { DATABASE_MODELS } from '../constants';
-import type { MenuItem } from '../types';
+import type { Dish } from '../types';
 
-type MenuItemCreationAttributes = Optional<
-  MenuItem,
+type DishCreationAttributes = Optional<
+  Dish,
   'id' | 'description' | 'imageUri' | 'kcal' | 'tags' | 'allergens' | 'discountPercent' | 'createdAt' | 'updatedAt'
 >;
 
-class MenuItemModel
-  extends Model<MenuItem, MenuItemCreationAttributes>
-  implements MenuItem
+class DishModel
+  extends Model<Dish, DishCreationAttributes>
+  implements Dish
 {
   public id!: number;
   public name!: string;
@@ -31,7 +31,7 @@ class MenuItemModel
   public readonly updatedAt!: Date;
 }
 
-MenuItemModel.init(
+DishModel.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -151,8 +151,8 @@ MenuItemModel.init(
   },
   {
     sequelize,
-    tableName: DATABASE_MODELS.MENU_ITEMS.TABLE_NAME,
-    modelName: DATABASE_MODELS.MENU_ITEMS.MODEL_NAME,
+    tableName: DATABASE_MODELS.DISHES.TABLE_NAME,
+    modelName: DATABASE_MODELS.DISHES.MODEL_NAME,
     timestamps: true,
     indexes: [
       {
@@ -175,7 +175,7 @@ MenuItemModel.init(
 );
 
 // Override toJSON to ensure DECIMAL fields are converted to numbers
-MenuItemModel.prototype.toJSON = function () {
+DishModel.prototype.toJSON = function () {
   const values = { ...this.get() };
   // Convert DECIMAL strings to numbers
   if (values.price !== undefined && values.price !== null) {
@@ -190,5 +190,5 @@ MenuItemModel.prototype.toJSON = function () {
   return values;
 };
 
-export default MenuItemModel;
+export default DishModel;
 

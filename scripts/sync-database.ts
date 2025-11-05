@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { sequelize, testConnection } from '../config/database';
 import {
+  DishModel,
   MenuCategoryModel,
-  MenuItemModel,
   RefreshTokenModel,
   RestaurantModel,
   UserModel,
@@ -30,9 +30,9 @@ const syncDatabase = async (): Promise<void> => {
     await MenuCategoryModel.sync({ alter: true });
     console.log('MenuCategory model synced');
 
-    console.log('\nSyncing MenuItem model...');
-    await MenuItemModel.sync({ alter: true });
-    console.log('MenuItem model synced');
+    console.log('\nSyncing Dish model...');
+    await DishModel.sync({ alter: true });
+    console.log('Dish model synced');
 
     console.log('\nSyncing User model...');
     await UserModel.sync({ alter: true });

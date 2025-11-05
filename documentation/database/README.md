@@ -13,9 +13,9 @@ The database is designed for a food delivery system using **MySQL** with **Seque
 - [Users Table](./tables/users.md) - User accounts and authentication
 - [RefreshTokens Table](./tables/refresh-tokens.md) - JWT refresh token storage
 - [Restaurants Table](./tables/restaurants.md) - Restaurant information
-- [Menu Tables](./tables/menu.md) - Menu categories and menu items
+- [Menu Tables](./tables/menu.md) - Menu categories and dishes
 - [Orders Tables](./tables/orders.md) - Orders and order items
-- [Ratings Table](./tables/ratings.md) - Menu item ratings and reviews
+- [Ratings Table](./tables/ratings.md) - Dish ratings and reviews
 
 ## Database Technology
 
@@ -31,11 +31,11 @@ The database is designed for a food delivery system using **MySQL** with **Seque
 |--------|---------|-------------------|
 | **Users** | Customer accounts | → Orders (1:many), → Ratings (1:many), → RefreshTokens (1:many) |
 | **Restaurants** | Restaurant information | → MenuCategories (1:many), → Orders (1:many) |
-| **MenuCategories** | Menu organization | ← Restaurants (many:1), → MenuItems (1:many) |
-| **MenuItems** | Individual dishes/products | ← MenuCategories (many:1), ← Restaurants (many:1), → OrderItems (1:many), → Ratings (1:many) |
+| **MenuCategories** | Menu organization | ← Restaurants (many:1), → Dishes (1:many) |
+| **Dishes** | Individual dishes/products | ← MenuCategories (many:1), ← Restaurants (many:1), → OrderItems (1:many), → Ratings (1:many) |
 | **Orders** | Order headers | ← Users (many:1), ← Restaurants (many:1), → OrderItems (1:many) |
-| **OrderItems** | Order line items | ← Orders (many:1), ← MenuItems (many:1) |
-| **Ratings** | User reviews | ← Users (many:1), ← MenuItems (many:1) |
+| **OrderItems** | Order line items | ← Orders (many:1), ← Dishes (many:1) |
+| **Ratings** | User reviews | ← Users (many:1), ← Dishes (many:1) |
 | **RefreshTokens** | JWT refresh token storage | ← Users (many:1) |
 
 ## Entity Relationship Diagram
@@ -48,12 +48,12 @@ erDiagram
     
     RESTAURANTS ||--o{ MENU_CATEGORIES : "has"
     RESTAURANTS ||--o{ ORDERS : "receives"
-    RESTAURANTS ||--o{ MENU_ITEMS : "offers"
+    RESTAURANTS ||--o{ DISHES : "offers"
     
-    MENU_CATEGORIES ||--o{ MENU_ITEMS : "contains"
+    MENU_CATEGORIES ||--o{ DISHES : "contains"
     
-    MENU_ITEMS ||--o{ ORDER_ITEMS : "referenced_by"
-    MENU_ITEMS ||--o{ RATINGS : "receives"
+    DISHES ||--o{ ORDER_ITEMS : "referenced_by"
+    DISHES ||--o{ RATINGS : "receives"
     
     ORDERS ||--o{ ORDER_ITEMS : "contains"
     
@@ -118,7 +118,7 @@ erDiagram
         datetime updatedAt
     }
     
-    MENU_ITEMS {
+    DISHES {
         int id PK
         string name
         text description
@@ -158,7 +158,7 @@ erDiagram
     ORDER_ITEMS {
         int id PK
         int orderId FK
-        int menuItemId FK
+        int dishId FK
         int quantity
         decimal priceAtOrder
         decimal subtotal
@@ -170,7 +170,7 @@ erDiagram
     RATINGS {
         int id PK
         int userId FK
-        int menuItemId FK
+        int dishId FK
         tinyint rating
         text comment
         datetime createdAt
@@ -199,5 +199,5 @@ Validation scripts and examples for design decisions are available in the [examp
 
 - Indexes are added on foreign keys and frequently queried fields
 - Order queries are optimized for handling 10,000+ orders
-- Proper indexing on `userId`, `restaurantId`, `orderId`, `menuItemId` for join performance
+- Proper indexing on `userId`, `restaurantId`, `orderId`, `dishId` for join performance
 

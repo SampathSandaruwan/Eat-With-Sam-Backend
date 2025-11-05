@@ -9,7 +9,7 @@ export interface MenuCategory {
   updatedAt: Date;
 }
 
-export interface MenuItem {
+export interface Dish {
   id: number;
   name: string;
   description?: string | null;

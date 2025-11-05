@@ -8,7 +8,7 @@ This document outlines the step-by-step implementation roadmap for the EatWithSa
 - ✅ Restaurant Management APIs (CRUD + Pagination)
 - ✅ Restaurant Rating Calculation (Automated job + Maintenance endpoints)
 - ✅ Menu Category Management APIs (CRUD + Pagination)
-- ✅ Menu Item Management APIs (CRUD + Pagination)
+- ✅ Dish Management APIs (CRUD + Pagination)
 - ✅ Common validation utilities (pagination, ID params)
 - ✅ Database seeding infrastructure
 - ✅ Postman collection updated
@@ -77,14 +77,14 @@ All phases must ensure:
    - [x] Create Sequelize models for:
      - [x] Restaurant
      - [x] MenuCategory
-     - [x] MenuItem
+     - [x] Dish
      - [ ] Order
      - [ ] OrderItem
      - [x] User
      - [x] RefreshToken
      - [ ] Rating
-   - [x] Define model associations (for Restaurant, MenuCategory, MenuItem)
-   - [x] Add model validations (for Restaurant, MenuCategory, MenuItem)
+   - [x] Define model associations (for Restaurant, MenuCategory, Dish)
+   - [x] Add model validations (for Restaurant, MenuCategory, Dish)
    - [ ] Create database migrations
 
 4. **Validation Setup**
@@ -181,7 +181,7 @@ All phases must ensure:
 
 2. **Rating Calculation Job**
    - [x] Create `calculateRestaurantRatings()` job function
-   - [x] Implement weighted average calculation from menu items
+   - [x] Implement weighted average calculation from dishes
    - [x] Handle restaurants with no rated items
    - [x] Process all restaurants with error handling
    - [x] Return calculation results (success, processed, errors)
@@ -210,7 +210,7 @@ All phases must ensure:
    - [ ] Integration tests for maintenance endpoint
    - [ ] Test cron job execution
 
-**Commit**: `feat(restaurants): :zap: add automated restaurant rating calculation from menu items`
+**Commit**: `feat(restaurants): :zap: add automated restaurant rating calculation from dishes`
 
 ---
 
@@ -223,8 +223,8 @@ All phases must ensure:
    - [x] Add validations
    - [x] Test model associations
 
-2. **MenuItem Model Implementation**
-   - [x] Complete MenuItem Sequelize model
+2. **Dish Model Implementation**
+   - [x] Complete Dish Sequelize model
    - [x] Add categoryId and restaurantId foreign keys
    - [x] Add validations (price > 0, rating 1-5, etc.)
    - [x] Handle JSON tags field
@@ -234,7 +234,7 @@ All phases must ensure:
 3. **Menu Validation Schemas**
    - [x] Create Zod schemas for:
      - [x] Create/update category requests
-     - [x] Create/update menu item requests
+     - [x] Create/update dish requests
      - [x] Query parameters (pagination, filters, sorting)
    - [x] Extract common validation fields
 
@@ -246,12 +246,12 @@ All phases must ensure:
      - [x] `createMenuCategory()` - Create category
      - [x] `updateMenuCategory()` - Update category
      - [x] `deleteMenuCategory()` - Delete category
-   - [x] **Menu Items:**
-     - [x] `createMenuItem()` - Create menu item
-     - [x] `getMenuItemById()` - Get item by ID
-     - [x] `getMenuItemsByCategoryId()` - List with pagination, filtering, sorting
-     - [x] `updateMenuItem()` - Update menu item
-     - [x] `deleteMenuItem()` - Delete menu item
+   - [x] **Dishes:**
+     - [x] `createDish()` - Create dish
+     - [x] `getDishById()` - Get dish by ID
+     - [x] `getDishesByCategoryId()` - List with pagination, filtering, sorting
+     - [x] `updateDish()` - Update dish
+     - [x] `deleteDish()` - Delete dish
    - [x] Refactored with helper functions for code reuse
 
 5. **Menu Routes**
@@ -262,11 +262,11 @@ All phases must ensure:
      - [x] `PATCH /api/menu-categories/:categoryId`
      - [x] `DELETE /api/menu-categories/:categoryId`
      - [x] `GET /api/restaurants/:restaurantId/menu-categories` (with pagination)
-     - [x] `POST /api/menu-items`
-     - [x] `GET /api/menu-items/:menuItemId`
-     - [x] `PUT /api/menu-items/:menuItemId`
-     - [x] `DELETE /api/menu-items/:menuItemId`
-     - [x] `GET /api/menu-categories/:categoryId/menu-items` (with pagination)
+     - [x] `POST /api/dishes`
+     - [x] `GET /api/dishes/:dishId`
+     - [x] `PUT /api/dishes/:dishId`
+     - [x] `DELETE /api/dishes/:dishId`
+     - [x] `GET /api/menu-categories/:categoryId/dishes` (with pagination)
    - [x] Add validation middleware
    - [x] Test pagination, filtering, sorting
 
@@ -300,7 +300,7 @@ All phases must ensure:
 
 3. **Order Business Logic**
    - [ ] Calculate order totals (subtotal, tax, delivery fee, total)
-   - [ ] Validate menu item availability
+   - [ ] Validate dish availability
    - [ ] Validate restaurant minimum order
    - [ ] Handle price snapshots (priceAtOrder)
 
@@ -345,8 +345,8 @@ All phases must ensure:
    - [ ] Create seeder for categories per restaurant
    - [ ] Generate varied category names
 
-3. **Menu Item Seeder**
-   - [ ] Create seeder for menu items
+3. **Dish Seeder**
+   - [ ] Create seeder for dishes
    - [ ] Generate realistic prices, descriptions
    - [ ] Generate JSON tags
    - [ ] Assign to categories
@@ -362,7 +362,7 @@ All phases must ensure:
    - [x] Seeder infrastructure exists (`seeders/index.ts`)
    - [x] Seeder utilities created (`seeders/utils/helpers.ts` with `createSeeder`)
    - [x] Faker.js integrated
-   - [x] Seeders for restaurants, menu categories, and menu items created
+   - [x] Seeders for restaurants, menu categories, and dishes created
    - [x] Update `seeders/index.ts` to run all seeders in order
    - [x] Add options for count and clearExisting
    - [ ] Test seeder execution
@@ -381,7 +381,7 @@ All phases must ensure:
 
 #### Tasks
 1. **API Documentation**
-   - [x] Update Postman collection with restaurant, category, and menu item endpoints
+   - [x] Update Postman collection with restaurant, category, and dish endpoints
    - [x] Add request/response examples
    - [ ] Document error responses (partially done)
    - [x] Add pagination examples
@@ -671,7 +671,7 @@ All phases must ensure:
 2. **Top Items Service Layer**
    - [ ] `getTopSellingItemsByQuantity()` - Sort by quantity sold
    - [ ] `getTopSellingItemsByRevenue()` - Sort by revenue
-   - [ ] Join OrderItems → MenuItems → Restaurants
+   - [ ] Join OrderItems → Dishes → Restaurants
    - [ ] Filter by date range
    - [ ] Filter by order status (exclude cancelled)
    - [ ] Optimize with proper indexes
@@ -912,7 +912,7 @@ All phases must ensure:
 2. ✅ `docs(database): add comprehensive database schema documentation`
 3. ✅ `feat(seeders): add database seeding infrastructure with Faker.js`
 4. ✅ `docs: add implementation plan, QA checklist, and documentation structure`
-5. ✅ `feat(menu): implement restaurant, menu category and menu item CRUD APIs with validation`
+5. ✅ `feat(menu): implement restaurant, menu category and dish CRUD APIs with validation`
 6. ✅ `feat(api): implement complete CRUD operations and pagination`
 7. ✅ `feat(restaurants): :zap: add automated restaurant rating calculation from menu items`
 8. ✅ `feat(auth): implement JWT authentication with token rotation`
