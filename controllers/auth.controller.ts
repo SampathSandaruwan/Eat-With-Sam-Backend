@@ -33,122 +33,51 @@ const _generateAndSendTokens = async (res: Response, user: UserModel, message: s
 };
 
 /**
- * Register a new user
+ * Register a new user with email and password
  */
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       email,
       password,
-      googleId,
       name,
       phoneNumber,
       address,
     }: RegisterUserRequestBody = req.body;
 
-    // Handle Google OAuth flow - check if user already exists
-    if (googleId) {
-      // Check if user exists with this googleId (login flow)
-      const existingUserByGoogleId = await UserModel.findOne({
-        where: { googleId },
-      });
+    // Normalize email to lowercase for consistent querying (validation ensures email exists)
+    const normalizedEmail = email.toLowerCase().trim();
 
-      if (existingUserByGoogleId) {
-        // User exists with this Google ID - this is a login, not registration
-        const deviceInfo = req.headers['user-agent'];
-
-        _generateAndSendTokens(res, existingUserByGoogleId, 'User logged in successfully', deviceInfo);
-        return;
-      }
-
-      // Normalize email to lowercase for consistent querying (validation ensures email exists)
-      const normalizedEmail = email.toLowerCase().trim();
-
-      // Check if user exists with this email but different auth method
-      const existingUserByEmail = await UserModel.findOne({
-        where: { email: normalizedEmail },
-      });
-
-      if (existingUserByEmail) {
-        // User exists with email but no googleId - link Google account
-        if (!existingUserByEmail.googleId) {
-          existingUserByEmail.googleId = googleId;
-          await existingUserByEmail.save();
-
-          const deviceInfo = req.headers['user-agent'];
-
-          _generateAndSendTokens(res, existingUserByEmail, 'Google account linked successfully', deviceInfo);
-          return;
-        } else {
-          // Email exists but with a different googleId
-          res.status(409).json({
-            success: false,
-            error: 'Email already exists with a different Google account',
-          });
-          return;
-        }
-      }
-
-      // New Google OAuth user - proceed with registration
-      const userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'> = {
-        email: normalizedEmail,
-        name,
-        googleId,
-        phoneNumber: phoneNumber ?? null,
-        address: address ?? null,
-        isActive: true,
-      };
-
-      const user = await UserModel.create(userData);
-
-      // Generate and store tokens
-      const deviceInfo = req.headers['user-agent'];
-      _generateAndSendTokens(res, user, 'User registered and logged in successfully', deviceInfo);
-      return;
-    }
-
-    // Email/Password registration flow
-    if (password) {
-      // Normalize email to lowercase for consistent querying (validation ensures email exists)
-      const normalizedEmail = email.toLowerCase().trim();
-
-      // Check if user already exists with this email
-      const existingUser = await UserModel.findOne({
-        where: { email: normalizedEmail },
-      });
-
-      if (existingUser) {
-        // Email already exists - this should use login endpoint instead
-        res.status(409).json({
-          success: false,
-          error: 'Email already exists. Please use the login endpoint.',
-        });
-        return;
-      }
-
-      // New email/password user - proceed with registration
-      const userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'> = {
-        email: normalizedEmail,
-        name,
-        passwordHash: password, // Will be hashed by beforeCreate hook
-        phoneNumber: phoneNumber ?? null,
-        address: address ?? null,
-        isActive: true,
-      };
-
-      const user = await UserModel.create(userData);
-
-      // Generate and store tokens
-      const deviceInfo = req.headers['user-agent'];
-      _generateAndSendTokens(res, user, 'User registered and logged in successfully', deviceInfo);
-      return;
-    }
-
-    // Should not reach here due to validation, but handle just in case
-    res.status(400).json({
-      success: false,
-      error: 'Either password or googleId must be provided',
+    // Check if user already exists with this email
+    const existingUser = await UserModel.findOne({
+      where: { email: normalizedEmail },
     });
+
+    if (existingUser) {
+      // Email already exists - this should use login endpoint instead
+      res.status(409).json({
+        success: false,
+        error: 'Email already exists. Please use the login endpoint.',
+      });
+      return;
+    }
+
+    // New email/password user - proceed with registration
+    const userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'> = {
+      email: normalizedEmail,
+      name,
+      passwordHash: password, // Will be hashed by beforeCreate hook
+      phoneNumber: phoneNumber ?? null,
+      address: address ?? null,
+      isActive: true,
+    };
+
+    const user = await UserModel.create(userData);
+
+    // Generate and store tokens
+    const deviceInfo = req.headers['user-agent'];
+    _generateAndSendTokens(res, user, 'User registered and logged in successfully', deviceInfo);
+    return;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error registering user:', error);
@@ -165,6 +94,114 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({
       success: false,
       error: 'Failed to register user',
+    });
+  }
+};
+
+/**
+ * Google OAuth authentication (handles both registration and login)
+ * Requires: email + googleId
+ * Optional: name, phoneNumber, address (name required only for new registrations)
+ */
+export const googleAuth = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const {
+      email,
+      googleId,
+      name,
+      phoneNumber,
+      address,
+    }: RegisterUserRequestBody = req.body;
+
+    // Check if user exists with this googleId (login flow)
+    const existingUserByGoogleId = await UserModel.findOne({
+      where: { googleId },
+    });
+
+    if (existingUserByGoogleId) {
+      // User exists with this Google ID - this is a login
+      // Check if user account is active
+      if (!existingUserByGoogleId.isActive) {
+        res.status(403).json({
+          success: false,
+          error: 'Account is disabled. Please contact support.',
+        });
+        return;
+      }
+
+      const deviceInfo = req.headers['user-agent'];
+      _generateAndSendTokens(res, existingUserByGoogleId, 'Login successful', deviceInfo);
+      return;
+    }
+
+    // Normalize email to lowercase for consistent querying (validation ensures email exists)
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if user exists with this email but different auth method
+    const existingUserByEmail = await UserModel.findOne({
+      where: { email: normalizedEmail },
+    });
+
+    if (existingUserByEmail) {
+      // User exists with email but no googleId - link Google account
+      if (!existingUserByEmail.googleId) {
+        existingUserByEmail.googleId = googleId;
+        await existingUserByEmail.save();
+
+        const deviceInfo = req.headers['user-agent'];
+        _generateAndSendTokens(res, existingUserByEmail, 'Google account linked successfully', deviceInfo);
+        return;
+      } else {
+        // Email exists but with a different googleId
+        res.status(409).json({
+          success: false,
+          error: 'Email already exists with a different Google account',
+        });
+        return;
+      }
+    }
+
+    // New Google OAuth user - proceed with registration
+    // Name is required for new user registration
+    if (!name || name.trim().length === 0) {
+      res.status(400).json({
+        success: false,
+        error: 'Name is required for new user registration',
+      });
+      return;
+    }
+
+    const userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'> = {
+      email: normalizedEmail,
+      name,
+      googleId,
+      phoneNumber: phoneNumber ?? null,
+      address: address ?? null,
+      isActive: true,
+    };
+
+    const user = await UserModel.create(userData);
+
+    // Generate and store tokens
+    const deviceInfo = req.headers['user-agent'];
+    _generateAndSendTokens(res, user, 'Registration and login successful', deviceInfo);
+    return;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error authenticating with Google:', error);
+
+    // Handle validation errors from model hooks
+    if (error instanceof Error && error.message.includes('password or googleId')) {
+      res.status(400).json({
+        success: false,
+        error: error.message,
+      });
+      return;
+    }
+
+    res.status(500).json({
+      success: false,
+      error: 'Failed to authenticate with Google',
     });
   }
 };
