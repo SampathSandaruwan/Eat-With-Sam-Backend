@@ -44,6 +44,23 @@ const dietaryTags = [
   'Organic',
 ];
 
+const allergens = [
+  'Gluten',
+  'Dairy',
+  'Eggs',
+  'Nuts',
+  'Peanuts',
+  'Soy',
+  'Fish',
+  'Shellfish',
+  'Sesame',
+  'Sulfites',
+  'Mustard',
+  'Celery',
+  'Lupin',
+  'Molluscs',
+];
+
 type RestaurantWithCategories = Restaurant & { menuCategories: MenuCategory[] };
 
 export const seedMenuItems = async (
@@ -104,6 +121,11 @@ export const seedMenuItems = async (
           .sort()
         : null;
 
+      // Generate allergens (3-10 per menu item)
+      const allergensList: string[] = faker.helpers
+        .arrayElements(allergens, { min: 3, max: 10 })
+        .sort();
+
       // Generate discount (10% chance)
       const discountPercent =
         faker.datatype.boolean({ probability: 0.1 }) && faker.number.int({ min: 10, max: 50 })
@@ -117,6 +139,7 @@ export const seedMenuItems = async (
         imageUri: faker.helpers.arrayElement(FOOD_IMAGE_URLS),
         kcal: faker.number.int({ min: 200, max: 1200 }),
         tags,
+        allergens: allergensList,
         discountPercent,
         isAvailable: faker.datatype.boolean({ probability: 0.9 }),
         categoryId: category.id,

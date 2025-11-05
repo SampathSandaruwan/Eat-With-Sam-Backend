@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { WhereOptions } from 'sequelize';
+import { Includeable, WhereOptions } from 'sequelize';
 
-import { MenuCategoryModel, RestaurantModel } from '../models';
+import { MenuCategoryModel, MenuItemModel, RestaurantModel } from '../models';
 import { MenuCategory } from '../types';
 
 export const getCategoryById = async (req: Request, res: Response): Promise<void> => {
@@ -52,22 +52,34 @@ const _filterCategories = async (
   limit = 20,
   sortBy = 'displayOrder',
   sortOrder: 'asc' | 'desc' = 'asc',
+  withMenuCategoryItems = false,
 ): Promise<void> => {
   const offset = (Number(page) - 1) * Number(limit);
   const orderBy = sortOrder === 'desc' ? 'DESC' : 'ASC';
+
+  const include: Includeable[] = [
+    {
+      model: RestaurantModel,
+      as: 'restaurant',
+      attributes: ['id', 'name'],
+    },
+  ];
+
+  if (withMenuCategoryItems) {
+    include.push({
+      model: MenuItemModel,
+      as: 'menuItems',
+      attributes: ['id', 'name', 'description', 'price', 'imageUri', 'kcal', 'tags', 'discountPercent', 'isAvailable', 'averageRating', 'ratingCount'],
+      separate: false,
+    });
+  }
 
   const { count, rows } = await MenuCategoryModel.findAndCountAll({
     where: whereClause,
     limit: Number(limit),
     offset,
     order: [[sortBy as string, orderBy]],
-    include: [
-      {
-        model: RestaurantModel,
-        as: 'restaurant',
-        attributes: ['id', 'name'],
-      },
-    ],
+    include,
   });
 
   res.json({
@@ -123,6 +135,7 @@ export const getCategoriesByRestaurantId = async (
     isActive,
     sortBy = 'displayOrder',
     sortOrder = 'asc',
+    withMenuCategoryItems = false,
   } = req.query;
 
   try {
@@ -136,6 +149,8 @@ export const getCategoriesByRestaurantId = async (
       return;
     }
 
+    const shouldIncludeItems = String(withMenuCategoryItems) === 'true';
+
     await _filterCategories(
       res,
       _generateWhereClause({
@@ -146,6 +161,7 @@ export const getCategoriesByRestaurantId = async (
       Number(limit),
       sortBy.toString(),
       sortOrder.toString() as 'asc' | 'desc',
+      shouldIncludeItems,
     );
   } catch (error) {
     console.error('Error fetching categories by restaurant:', error);
