@@ -1,22 +1,26 @@
 import { Router } from 'express';
 
-import { login, logout, logoutAll, refreshToken, register } from '../controllers';
+import { googleAuth, login, logout, logoutAll, refreshToken, register } from '../controllers';
 import { authenticate, validate } from '../middlewares';
 import {
+  googleAuthSchema,
   loginSchema,
   logoutAllSchema,
   logoutSchema,
   refreshTokenSchema,
-  registerUserUnifiedSchema,
+  registerUserSchema,
 } from '../validations';
 
 const router = Router();
 
-// Register endpoint supports both email/password and Google OAuth
-router.post('/signup', validate(registerUserUnifiedSchema), register);
+// Basic login way - Register user with email/password
+router.post('/signup', validate(registerUserSchema), register);
 
-// Login endpoint for email/password authentication
+// Basic login way - Login user with email/password
 router.post('/login', validate(loginSchema), login);
+
+// Google OAuth - Handles both registration and login
+router.post('/google', validate(googleAuthSchema), googleAuth);
 
 // Refresh token endpoint with token rotation
 router.post('/refresh', validate(refreshTokenSchema), refreshToken);

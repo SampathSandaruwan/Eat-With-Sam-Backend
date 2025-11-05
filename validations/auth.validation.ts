@@ -27,51 +27,21 @@ export const registerUserSchema = z
         googleId: z.never().optional(), // Explicitly not allowed
       })
       .strict(),
+    query: z.object().optional(),
+    params: z.object().optional(),
   })
   .strict();
 
-// Schema for Google OAuth registration
-export const registerGoogleUserSchema = z
+// Schema for Google OAuth authentication (handles both registration and login)
+// Note: name is optional here - it's validated in the controller for new registrations only
+export const googleAuthSchema = z
   .object({
     body: z
       .object({
         ...baseUserFields,
         googleId: z.string().min(1, 'Google ID is required'),
-        password: z.never().optional(), // Explicitly not allowed
       })
       .strict(),
-  })
-  .strict();
-
-// Unified schema that accepts either email/password OR Google OAuth
-export const registerUserUnifiedSchema = z
-  .object({
-    body: z
-      .object({
-        ...baseUserFields,
-        password: z
-          .string()
-          .min(8, 'Password must be at least 8 characters long')
-          .regex(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-            'Password must contain at least one lowercase letter, one uppercase letter, and one number',
-          )
-          .optional(),
-        googleId: z.string().min(1, 'Google ID cannot be empty').optional(),
-      })
-      .strict()
-      .refine(
-        (data) => {
-          // Either password or googleId must be provided, but not both
-          const hasPassword = !!data.password;
-          const hasGoogleId = !!data.googleId;
-          return (hasPassword && !hasGoogleId) || (!hasPassword && hasGoogleId);
-        },
-        {
-          message:
-            'Either password or googleId must be provided, but not both',
-        },
-      ),
     query: z.object().optional(),
     params: z.object().optional(),
   })
