@@ -4,7 +4,9 @@ import authRoutes from './auth.routes';
 import dishRoutes from './dish.routes';
 import maintenanceRoutes from './maintenance.routes';
 import menuCategoryRoutes from './menuCategory.routes';
+import orderRoutes from './order.routes';
 import restaurantRoutes from './restaurant.routes';
+import userRoutes from './user.routes';
 
 const router: Router = express.Router();
 
@@ -22,6 +24,12 @@ router.use('/menu-categories', menuCategoryRoutes);
 
 // Dish routes
 router.use('/dishes', dishRoutes);
+
+// Order routes
+router.use('/orders', orderRoutes);
+
+// User routes
+router.use('/users', userRoutes);
 
 export default router;
 

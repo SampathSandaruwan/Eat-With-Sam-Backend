@@ -6,12 +6,14 @@ import {
   getAllRestaurants,
   getCategoriesByRestaurantId,
   getRestaurantById,
+  getRestaurantOrders,
   updateRestaurant,
 } from '../controllers';
-import { validate } from '../middlewares';
+import { authenticate, validate } from '../middlewares';
 import {
   createRestaurantSchema,
   filterMenuCategoriesSchema,
+  filterOrdersSchema,
   filterRestaurantsSchema,
   restaurantIdPathParamSchema,
   updateRestaurantSchema,
@@ -56,6 +58,14 @@ router.get(
   validate(restaurantIdPathParamSchema),
   validate(filterMenuCategoriesSchema),
   getCategoriesByRestaurantId,
+);
+
+router.get(
+  '/:restaurantId/orders',
+  authenticate,
+  validate(restaurantIdPathParamSchema),
+  validate(filterOrdersSchema),
+  getRestaurantOrders,
 );
 
 export default router;
