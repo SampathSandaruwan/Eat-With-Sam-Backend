@@ -912,6 +912,231 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update an order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"confirmed\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/orders/:id/status",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"orders",
+								":id",
+								"status"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "10003"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reports",
+			"item": [
+				{
+					"name": "Total sales report",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/reports/sales?period=day&sortBy=totalSales&orderBy=desc",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"reports",
+								"sales"
+							],
+							"query": [
+								{
+									"key": "period",
+									"value": "day"
+								},
+								{
+									"key": "sortBy",
+									"value": "totalSales"
+								},
+								{
+									"key": "orderBy",
+									"value": "desc"
+								},
+								{
+									"key": "status",
+									"value": null,
+									"description": "If user want to see sales of specific status orders",
+									"disabled": true
+								},
+								{
+									"key": "startDate",
+									"value": null,
+									"description": "Filter by order date range",
+									"disabled": true
+								},
+								{
+									"key": "endDate",
+									"value": null,
+									"description": "Filter by order date range",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Top selling items report",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/reports/top-selling-items?sortBy=quantity",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"reports",
+								"top-selling-items"
+							],
+							"query": [
+								{
+									"key": "sortBy",
+									"value": "quantity"
+								},
+								{
+									"key": "status",
+									"value": "pending",
+									"description": "Default: non-cancelled",
+									"disabled": true
+								},
+								{
+									"key": "restaurantId",
+									"value": "",
+									"description": "Filter resturantId based order records only",
+									"disabled": true
+								},
+								{
+									"key": "startDate",
+									"value": "",
+									"description": "Filter by order date range",
+									"disabled": true
+								},
+								{
+									"key": "endDate",
+									"value": "",
+									"description": "Filter by order date range",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Average order value report",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/reports/average-order-value?period=day",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"reports",
+								"average-order-value"
+							],
+							"query": [
+								{
+									"key": "period",
+									"value": "day"
+								},
+								{
+									"key": "status",
+									"value": null,
+									"description": "Filter orders by status",
+									"disabled": true
+								},
+								{
+									"key": "restaurantId",
+									"value": null,
+									"description": "Consider only this restaurant's orders",
+									"disabled": true
+								},
+								{
+									"key": "startDate",
+									"value": null,
+									"description": "Filter by order date range",
+									"disabled": true
+								},
+								{
+									"key": "endDate",
+									"value": null,
+									"description": "Filter by order date range",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

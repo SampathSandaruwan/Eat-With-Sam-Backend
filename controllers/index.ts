@@ -3,4 +3,5 @@ export * from './dish.controller';
 export * from './maintenance.controller';
 export * from './menuCategory.controller';
 export * from './order.controller';
+export * from './reporting.controller';
 export * from './restaurant.controller';
