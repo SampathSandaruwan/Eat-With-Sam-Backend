@@ -4,18 +4,18 @@ This document outlines the step-by-step implementation roadmap for the EatWithSa
 
 ## Current Status
 
-**Phase 1: Menu & Order Management** - **In Progress** (65% Complete)
+**Phase 1: Menu & Order Management** - **Completed** ✅
 - ✅ Restaurant Management APIs (CRUD + Pagination)
 - ✅ Restaurant Rating Calculation (Automated job + Maintenance endpoints)
 - ✅ Menu Category Management APIs (CRUD + Pagination)
 - ✅ Dish Management APIs (CRUD + Pagination)
+- ✅ Order Management APIs (CRUD + Validation + Auth Protection)
 - ✅ Common validation utilities (pagination, ID params)
 - ✅ Database seeding infrastructure
+- ✅ Complete seeding with 10,000+ orders
 - ✅ Postman collection updated
-- ⏳ Order Management APIs (Pending)
-- ⏳ Complete seeding with 10,000+ orders (Pending Order model)
 
-**Phase 2: Authentication & Authorization** - **Completed** ✅
+**Phase 2: Authentication & Authorization** - **Mostly Completed** ✅ (90%)
 - ✅ User Model with password hashing and Google OAuth support
 - ✅ User Registration (email/password and Google OAuth)
 - ✅ JWT Authentication (access and refresh tokens)
@@ -23,16 +23,18 @@ This document outlines the step-by-step implementation roadmap for the EatWithSa
 - ✅ Authentication Middleware
 - ✅ Logout endpoints (single device and all devices)
 - ✅ Token expiry validation and email normalization
-- ⏳ User Profile endpoints (Pending)
-- ⏳ User Seeder (Pending)
-- ⏳ Tests (Pending)
+- ✅ Order routes protected with authentication
+- ✅ User routes implemented
+- ⏳ User Profile endpoints (GET /me, PUT /me, PUT /password) - Pending
+- ⏳ User Seeder - Pending
+- ⏳ Tests - Pending
 
 **Phase 3: Reporting** - **Not Started**
 
 ## Implementation Order
 
-1. **Phase 1: Menu & Order Management** (Foundation) - *In Progress*
-2. **Phase 2: Authentication & Authorization** (Security) - *Completed* ✅
+1. **Phase 1: Menu & Order Management** (Foundation) - *Completed* ✅
+2. **Phase 2: Authentication & Authorization** (Security) - *Mostly Completed* ✅ (90%)
 3. **Phase 3: Reporting** (Analytics) - *Pending*
 
 ---
@@ -78,14 +80,15 @@ All phases must ensure:
      - [x] Restaurant
      - [x] MenuCategory
      - [x] Dish
-     - [ ] Order
-     - [ ] OrderItem
+     - [x] Order
+     - [x] OrderItem
      - [x] User
      - [x] RefreshToken
-     - [ ] Rating
-   - [x] Define model associations (for Restaurant, MenuCategory, Dish)
-   - [x] Add model validations (for Restaurant, MenuCategory, Dish)
-   - [ ] Create database migrations
+     - [ ] Rating (Note: Rating tracking implemented via averageRating fields on Restaurant and Dish models)
+   - [x] Define model associations (for all models including Order and OrderItem)
+   - [x] Add model validations (for all models)
+   - [x] Database schema sync script (`npm run sync-db`)
+   - [ ] Create database migrations (using Sequelize sync for now)
 
 4. **Validation Setup**
    - [x] Install and configure Zod
@@ -285,41 +288,42 @@ All phases must ensure:
 
 #### Tasks
 1. **Order & OrderItem Models Implementation**
-   - [ ] Complete Order Sequelize model
-   - [ ] Complete OrderItem Sequelize model
-   - [ ] Add all foreign keys and associations
-   - [ ] Add validations (status enum, quantity > 0, etc.)
-   - [ ] Add order number generation logic
+   - [x] Complete Order Sequelize model
+   - [x] Complete OrderItem Sequelize model
+   - [x] Add all foreign keys and associations
+   - [x] Add validations (status enum, quantity > 0, etc.)
+   - [x] Add order number generation logic
    - [ ] Test model associations
 
 2. **Order Validation Schemas**
-   - [ ] Create Zod schemas for:
-     - [ ] Place order request (items, quantities, delivery address)
-     - [ ] Update order request (status updates)
-     - [ ] Query parameters (pagination, filters, date ranges)
+   - [x] Create Zod schemas for:
+     - [x] Place order request (items, quantities, delivery address)
+     - [x] Update order request (status updates)
+     - [x] Query parameters (pagination, filters, date ranges)
 
 3. **Order Business Logic**
-   - [ ] Calculate order totals (subtotal, tax, delivery fee, total)
-   - [ ] Validate dish availability
-   - [ ] Validate restaurant minimum order
-   - [ ] Handle price snapshots (priceAtOrder)
+   - [x] Calculate order totals (subtotal, tax, delivery fee, total)
+   - [x] Validate dish availability
+   - [x] Validate restaurant minimum order
+   - [x] Handle price snapshots (priceAtOrder)
 
 4. **Order Controllers**
-   - [ ] `placeOrder()` - Create new order with items
-   - [ ] `getOrder()` - Get order by ID with items
-   - [ ] `getUserOrders()` - Get user's order history (paginated)
-   - [ ] `getRestaurantOrders()` - Get restaurant's orders (paginated)
-   - [ ] `updateOrderStatus()` - Update order status
-   - [ ] Error handling and validation
+   - [x] `placeOrder()` - Create new order with items
+   - [x] `getOrder()` - Get order by ID with items
+   - [x] `getUserOrders()` - Get user's order history (paginated)
+   - [x] `getUserOrdersById()` - Get user orders by user ID (with auth)
+   - [x] `updateOrderStatus()` - Update order status
+   - [x] Error handling and validation
 
 5. **Order Routes**
-   - [ ] Define RESTful routes:
-     - [ ] `POST /api/orders` - Place order
-     - [ ] `GET /api/orders/:id` - Get order details
-     - [ ] `GET /api/orders` - Get user orders (with auth middleware later)
-     - [ ] `GET /api/restaurants/:restaurantId/orders` - Get restaurant orders
-     - [ ] `PATCH /api/orders/:id/status` - Update status
-   - [ ] Add validation middleware
+   - [x] Define RESTful routes:
+     - [x] `POST /api/orders` - Place order (protected with auth)
+     - [x] `GET /api/orders/:id` - Get order details (protected with auth)
+     - [x] `GET /api/orders` - Get user orders (protected with auth)
+     - [x] `GET /api/users/:id/orders` - Get user orders by ID (protected with auth)
+     - [x] `PATCH /api/orders/:id/status` - Update status (protected with auth)
+   - [x] Add validation middleware
+   - [x] Add authentication middleware to all routes
    - [ ] Test all endpoints
 
 6. **Order Tests**
@@ -329,7 +333,7 @@ All phases must ensure:
    - [ ] Test validation (minimum order, availability)
    - [ ] Test error scenarios
 
-**Commit**: `feat(orders): implement order management APIs with calculations and validation`
+**Commit**: `feat(orders): implement order management APIs with calculations and validation` ✅
 
 ---
 
@@ -337,43 +341,43 @@ All phases must ensure:
 
 #### Tasks
 1. **Restaurant Seeder**
-   - [ ] Create seeder function using Faker.js
-   - [ ] Generate realistic restaurant data
-   - [ ] Seed multiple restaurants with varied data
+   - [x] Create seeder function using Faker.js
+   - [x] Generate realistic restaurant data
+   - [x] Seed multiple restaurants with varied data
 
 2. **Menu Category Seeder**
-   - [ ] Create seeder for categories per restaurant
-   - [ ] Generate varied category names
+   - [x] Create seeder for categories per restaurant
+   - [x] Generate varied category names
 
 3. **Dish Seeder**
-   - [ ] Create seeder for dishes
-   - [ ] Generate realistic prices, descriptions
-   - [ ] Generate JSON tags
-   - [ ] Assign to categories
+   - [x] Create seeder for dishes
+   - [x] Generate realistic prices, descriptions
+   - [x] Generate JSON tags
+   - [x] Assign to categories
 
 4. **Order Seeder (10,000+ Orders)**
-   - [ ] Create order seeder
-   - [ ] Generate 10,000+ orders with varied statuses
-   - [ ] Generate realistic order items (2-5 items per order)
-   - [ ] Distribute orders across time periods (for reporting)
-   - [ ] Optimize seeder for performance (batch inserts)
+   - [x] Create order seeder
+   - [x] Generate 10,000+ orders with varied statuses
+   - [x] Generate realistic order items (2-5 items per order)
+   - [x] Distribute orders across time periods (for reporting)
+   - [x] Optimize seeder for performance (batch inserts)
 
 5. **Seeder Runner**
    - [x] Seeder infrastructure exists (`seeders/index.ts`)
    - [x] Seeder utilities created (`seeders/utils/helpers.ts` with `createSeeder`)
    - [x] Faker.js integrated
-   - [x] Seeders for restaurants, menu categories, and dishes created
+   - [x] Seeders for restaurants, menu categories, dishes, and orders created
    - [x] Update `seeders/index.ts` to run all seeders in order
    - [x] Add options for count and clearExisting
-   - [ ] Test seeder execution
-   - [ ] Verify 10,000+ orders are created (pending Order model)
+   - [x] Seeder execution tested and verified
+   - [x] Verified 10,000+ orders can be created successfully
 
 6. **Seeder Tests**
    - [ ] Test individual seeders
    - [ ] Test seeder runner
    - [ ] Verify data integrity after seeding
 
-**Commit**: `feat(seeders): implement database seeders with Faker.js for 10,000+ orders`
+**Commit**: `feat(seeders): implement database seeders with Faker.js for 10,000+ orders` ✅
 
 ---
 
@@ -381,10 +385,11 @@ All phases must ensure:
 
 #### Tasks
 1. **API Documentation**
-   - [x] Update Postman collection with restaurant, category, and dish endpoints
+   - [x] Update Postman collection with restaurant, category, dish, and order endpoints
    - [x] Add request/response examples
    - [ ] Document error responses (partially done)
    - [x] Add pagination examples
+   - [x] Document order endpoints with authentication requirements
 
 2. **Code Documentation**
    - [ ] Add JSDoc comments to controllers
@@ -561,9 +566,10 @@ All phases must ensure:
 
 #### Tasks
 1. **Update Existing Routes**
-   - [ ] Protect order routes with auth middleware
-   - [ ] Ensure users can only access their own orders
-   - [ ] Update user orders endpoint to use authenticated user
+   - [x] Protect order routes with auth middleware
+   - [x] Ensure users can only access their own orders
+   - [x] Update user orders endpoint to use authenticated user
+   - [x] User routes implemented (`GET /api/users/:id/orders`)
 
 2. **User Profile Endpoints**
    - [ ] `GET /api/auth/me` - Get current user profile
@@ -590,7 +596,7 @@ All phases must ensure:
    - [ ] Test logout functionality
    - [ ] Test logout-all functionality
 
-**Commit**: `feat(auth): protect routes and add user management endpoints`
+**Commit**: `feat(auth): protect routes and add user management endpoints` (Partially completed - order routes protected, user profile endpoints pending)
 
 ---
 
@@ -916,23 +922,23 @@ All phases must ensure:
 6. ✅ `feat(api): implement complete CRUD operations and pagination`
 7. ✅ `feat(restaurants): :zap: add automated restaurant rating calculation from menu items`
 8. ✅ `feat(auth): implement JWT authentication with token rotation`
+9. ✅ `feat(orders): implement order management APIs with calculations and validation`
+10. ✅ `feat(seeders): complete database seeders with Faker.js for 10,000+ orders`
+11. ✅ `feat(auth): protect order routes with authentication middleware`
 
-### In Progress / Next Steps
-9. `feat(orders): implement order management APIs with calculations and validation`
-10. `feat(seeders): complete database seeders with Faker.js for 10,000+ orders` (pending Order model)
-11. `docs(api): update API documentation for menu and order endpoints`
+### Next Steps / Pending
 12. `feat(auth): add user profile endpoints (GET /me, PUT /me, PUT /password)`
 13. `feat(seeders): add user seeder with Faker.js`
-14. `test(auth): add comprehensive tests for authentication flow`
+14. `docs(api): update API documentation for menu and order endpoints`
 15. `docs(auth): update API documentation for authentication endpoints`
 16. `feat(reports): implement sales reporting APIs with time period aggregation`
 17. `feat(reports): implement top-selling items reporting APIs`
 18. `feat(reports): implement average order value reporting APIs`
 19. `feat(reports): add advanced querying and optimize performance`
-21. `docs(reports): update API documentation for reporting endpoints`
-22. `test: add comprehensive test coverage`
-23. `ci: finalize CI/CD pipeline with full test and lint checks`
-24. `chore: final code quality improvements and documentation review`
+20. `docs(reports): update API documentation for reporting endpoints`
+21. `test: add comprehensive test coverage`
+22. `ci: finalize CI/CD pipeline with full test and lint checks`
+23. `chore: final code quality improvements and documentation review`
 
 ---
 
