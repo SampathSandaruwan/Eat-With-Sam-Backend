@@ -5,6 +5,7 @@ import dishRoutes from './dish.routes';
 import maintenanceRoutes from './maintenance.routes';
 import menuCategoryRoutes from './menuCategory.routes';
 import orderRoutes from './order.routes';
+import reportingRoutes from './reporting.routes';
 import restaurantRoutes from './restaurant.routes';
 import userRoutes from './user.routes';
 
@@ -27,6 +28,9 @@ router.use('/dishes', dishRoutes);
 
 // Order routes
 router.use('/orders', orderRoutes);
+
+// Reporting routes
+router.use('/reports', reportingRoutes);
 
 // User routes
 router.use('/users', userRoutes);
