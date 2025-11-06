@@ -19,7 +19,7 @@ Follow these steps to set up the project on your local machine:
 
 ```bash
 git clone <repository-url>
-cd EatWithSamBackend
+cd Eat-With-Sam-Backend
 ```
 
 ### 2. Install Dependencies
@@ -148,7 +148,12 @@ For more details on database seeding, see the [seeders documentation](./seeders/
 
 ## Documentation
 
-For comprehensive documentation including database schema, API testing, and more, see the [documentation](./documentation/README.md) directory.
+For comprehensive project documentation, see the [Documentation Index](./documentation/README.md) which includes:
+- Database schema documentation with ER diagrams
+- API testing guides and Postman collection
+- Implementation plans and progress tracking
+- Business decisions and architectural choices
+- Quality assurance checklists
 
 ## Project Structure
 
@@ -181,9 +186,22 @@ For comprehensive documentation including database schema, API testing, and more
 
 ```
 
-## API Endpoints
+## API Documentation
 
-- `GET /health` - Health check endpoint
+For complete API documentation including all available endpoints, see the [API Testing documentation](./documentation/api/README.md). The project includes a Postman collection that can be imported from [`documentation/api/postman_collection.json`](./documentation/api/postman_collection.json).
+
+For comprehensive project documentation including database schema, implementation plans, business decisions, and quality assurance guidelines, see the [Documentation Index](./documentation/README.md).
+
+### Key Documentation Links
+
+- **[Documentation Index](./documentation/README.md)** - Complete documentation directory overview
+- **[API Testing](./documentation/api/README.md)** - Postman collection and API testing guide
+- **[Database Schema](./documentation/database/README.md)** - Complete database schema documentation with ER diagrams
+- **[Implementation Plan](./documentation/implementation-plan.md)** - Step-by-step implementation roadmap with progress tracking
+- **[Business Decisions](./documentation/business-decisions.md)** - Items requiring business/product decisions
+- **[Quality Assurance Checklist](./documentation/quality-assurance-checklist.md)** - Pre-submission quality checklist
+
+
 
 ## Environment Variables
 

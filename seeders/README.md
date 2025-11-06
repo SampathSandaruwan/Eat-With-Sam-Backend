@@ -10,7 +10,36 @@ This directory contains database seeding scripts using Faker.js.
 npm run seed
 ```
 
-NOTE: Modify `SEEDING_CONFIG` to customize the seeding behavior
+### Configuring Seeding Behavior
+
+The seeding behavior is controlled by the `SEEDING_CONFIG` constant at the top of `seeders/index.ts`. This makes it easy to customize the seeding pattern without modifying individual seeder calls.
+
+```typescript
+const SEEDING_CONFIG = {
+  RESTAURANTS: {
+    COUNT: 20,
+    CLEAR_EXISTING: true,
+  },
+  MENU_CATEGORIES: {
+    COUNT: 50,
+    CLEAR_EXISTING: true,
+  },
+  DISHES: {
+    COUNT: 500,
+    CLEAR_EXISTING: true,
+  },
+  ORDERS: {
+    COUNT: 10000,
+    CLEAR_EXISTING: true,
+  },
+};
+```
+
+**Configuration Options:**
+- `COUNT`: Number of records to create for each entity type
+- `CLEAR_EXISTING`: Whether to clear existing records before seeding (set to `true` to truncate tables, `false` to keep existing data)
+
+Simply edit the values in `SEEDING_CONFIG` to adjust the seeding pattern for your needs.
 
 ## Adding New Seeders
 
@@ -45,8 +74,11 @@ await seedUsers({ count: 50, clearExisting: true });
 
 ## Seeder Options
 
+Individual seeder functions accept these options:
 - `count`: Number of records to create (default: 10)
 - `clearExisting`: Whether to clear existing records before seeding (default: false)
+
+**Note**: When using the main seeding script (`npm run seed`), these options are controlled via the `SEEDING_CONFIG` constant in `seeders/index.ts` rather than passing them directly to seeder functions.
 
 ## Performance Testing Requirements
 
