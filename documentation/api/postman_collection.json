@@ -730,13 +730,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/restaurants/:restaurantId/menu-categories?withMenuCategoryItems=true",
+									"raw": "{{BASE_URL}}/restaurants/:id/menu-categories?withDishes=true",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"restaurants",
-										":restaurantId",
+										":id",
 										"menu-categories"
 									],
 									"query": [
@@ -761,14 +761,49 @@
 											"disabled": true
 										},
 										{
-											"key": "withMenuCategoryItems",
+											"key": "withDishes",
 											"value": "true"
 										}
 									],
 									"variable": [
 										{
-											"key": "restaurantId",
-											"value": "148"
+											"key": "id",
+											"value": "11"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get orders of a restaurant",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ACCESS_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/restaurants/:id/orders",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"restaurants",
+										":id",
+										"orders"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "11"
 										}
 									]
 								}
@@ -795,6 +830,130 @@
 							"path": [
 								"maintenance",
 								"calculate-ratings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Get all orders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/orders?userId=13&restaurantId=11",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "13"
+								},
+								{
+									"key": "restaurantId",
+									"value": "11"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Place an order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"restaurantId\": 11,\n    \"deliveryAddress\": \"Moratuwa, Sri Lanka\",\n    \"items\": [\n        {\n            \"dishId\": 370,\n            \"quantity\": 2\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/orders",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get user orders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/users/:id/orders?limit=2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								":id",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5"
+								}
 							]
 						}
 					},

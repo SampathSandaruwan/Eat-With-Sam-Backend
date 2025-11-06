@@ -14,6 +14,7 @@ export interface Restaurant {
   deliveryTime?: number | null;
   minimumOrder: number;
   deliveryFee: number;
+  serviceChargeRate: number;
   taxRate: number;
   isActive: boolean;
   openingTime?: string | null;

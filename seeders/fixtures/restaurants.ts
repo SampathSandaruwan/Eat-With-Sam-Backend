@@ -38,6 +38,7 @@ export const seedRestaurants = createSeeder<Restaurant>(
     deliveryTime: () => faker.number.int({ min: 15, max: 60 }),
     minimumOrder: () => Number(faker.number.float({ min: 0, max: 20, fractionDigits: 2 })),
     deliveryFee: () => Number(faker.number.float({ min: 0, max: 10, fractionDigits: 2 })),
+    serviceChargeRate: () => Number(faker.number.float({ min: 0, max: 0.15, fractionDigits: 4 })),
     taxRate: () => Number(faker.number.float({ min: 0.05, max: 0.25, fractionDigits: 4 })),
     isActive: () => faker.datatype.boolean({ probability: 0.9 }),
     openingTime: () => {

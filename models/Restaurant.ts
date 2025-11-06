@@ -23,6 +23,7 @@ class RestaurantModel
   public deliveryTime?: number | null;
   public minimumOrder!: number;
   public deliveryFee!: number;
+  public serviceChargeRate!: number;
   public taxRate!: number;
   public isActive!: boolean;
   public openingTime?: string | null;
@@ -129,6 +130,19 @@ RestaurantModel.init(
         return value !== null && value !== undefined ? Number(value) : value;
       },
     },
+    serviceChargeRate: {
+      type: DataTypes.DECIMAL(5, 4),
+      allowNull: false,
+      defaultValue: 0.0,
+      validate: {
+        min: 0,
+        max: 1,
+      },
+      get() {
+        const value = this.getDataValue('serviceChargeRate');
+        return value !== null && value !== undefined ? Number(value) : value;
+      },
+    },
     taxRate: {
       type: DataTypes.DECIMAL(5, 4),
       allowNull: false,
@@ -218,6 +232,9 @@ RestaurantModel.prototype.toJSON = function () {
   }
   if (values.deliveryFee !== undefined && values.deliveryFee !== null) {
     values.deliveryFee = Number(values.deliveryFee);
+  }
+  if (values.serviceChargeRate !== undefined && values.serviceChargeRate !== null) {
+    values.serviceChargeRate = Number(values.serviceChargeRate);
   }
   if (values.taxRate !== undefined && values.taxRate !== null) {
     values.taxRate = Number(values.taxRate);

@@ -24,4 +24,12 @@ export const DATABASE_MODELS: {
     TABLE_NAME: 'RefreshTokens',
     MODEL_NAME: 'RefreshToken',
   },
+  ORDERS: {
+    TABLE_NAME: 'Orders',
+    MODEL_NAME: 'Order',
+  },
+  ORDER_ITEMS: {
+    TABLE_NAME: 'OrderItems',
+    MODEL_NAME: 'OrderItem',
+  },
 };
