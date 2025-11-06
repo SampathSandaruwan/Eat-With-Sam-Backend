@@ -1,0 +1,64 @@
+/* eslint-disable no-console */
+import { sequelize, testConnection } from '../config/database';
+import {
+  DishModel,
+  MenuCategoryModel,
+  RefreshTokenModel,
+  RestaurantModel,
+  UserModel,
+} from '../models';
+
+/**
+ * Sync database schema to match models
+ * This will ALTER tables to add/remove columns as needed
+ * WARNING: Use with caution in production - always backup first!
+ */
+const syncDatabase = async (): Promise<void> => {
+  try {
+    console.log('Starting database schema sync...');
+
+    // Test database connection
+    await testConnection();
+
+    // Sync models with alter: true to add missing columns/modify existing ones
+    // This will NOT drop tables or data, only alter them
+    console.log('\nSyncing Restaurant model...');
+    await RestaurantModel.sync({ alter: true });
+    console.log('Restaurant model synced');
+
+    console.log('\nSyncing MenuCategory model...');
+    await MenuCategoryModel.sync({ alter: true });
+    console.log('MenuCategory model synced');
+
+    console.log('\nSyncing Dish model...');
+    await DishModel.sync({ alter: true });
+    console.log('Dish model synced');
+
+    console.log('\nSyncing User model...');
+    await UserModel.sync({ alter: true });
+    console.log('User model synced');
+
+    console.log('\nSyncing RefreshToken model...');
+    await RefreshTokenModel.sync({ alter: true });
+    console.log('RefreshToken model synced');
+
+    console.log('\nDatabase schema sync completed successfully!');
+  } catch (error) {
+    console.error('\nError syncing database schema:', error);
+    throw error;
+  } finally {
+    await sequelize.close();
+  }
+};
+
+// Run the sync
+syncDatabase()
+  .then(() => {
+    console.log('\nDone!');
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error('\nFailed to sync database:', error);
+    process.exit(1);
+  });
+

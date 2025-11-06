@@ -1,6 +1,7 @@
-import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import express, { NextFunction,Request, Response } from 'express';
+
 import routes from './routes';
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use((_req: Request, res: Response) => {
 
 // Error handler
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  // eslint-disable-next-line no-console
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
